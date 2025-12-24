@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Layout Learning Portal: Welcome</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            color: var(--text);
+            max-width: 800px;
+            margin: 0 auto 25px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        /* Progress indicator for course overview */
+        .course-progress {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px auto 40px;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .course-progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .course-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* Module selection cards */
+        .modules-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0 50px;
+        }
+
+        @media (max-width: 768px) {
+            .modules-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .module-card.flex {
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .module-card.flex:hover {
+            border-color: var(--primary);
+        }
+
+        .module-card.grid {
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        .module-card.grid:hover {
+            border-color: var(--secondary);
+        }
+
+        .module-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 25px;
+            position: relative;
+        }
+
+        .flex .module-icon {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
+            color: var(--primary);
+        }
+
+        .grid .module-icon {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(124, 58, 237, 0.05));
+            color: var(--secondary);
+        }
+
+        .module-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px dashed;
+            opacity: 0.3;
+        }
+
+        .flex .module-icon::after {
+            border-color: var(--primary);
+        }
+
+        .grid .module-icon::after {
+            border-color: var(--secondary);
+        }
+
+        .module-title {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .flex .module-title {
+            color: var(--primary);
+        }
+
+        .grid .module-title {
+            color: var(--secondary);
+        }
+
+        .module-description {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.7;
+            flex-grow: 1;
+        }
+
+        .module-features {
+            text-align: left;
+            margin-bottom: 35px;
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid;
+        }
+
+        .flex .module-features {
+            border-left-color: var(--primary);
+        }
+
+        .grid .module-features {
+            border-left-color: var(--secondary);
+        }
+
+        .module-features h4 {
+            margin-bottom: 15px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-features ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .module-features li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .module-features li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .flex .module-features li:before {
+            color: var(--primary);
+        }
+
+        .grid .module-features li:before {
+            color: var(--secondary);
+        }
+
+        .module-button {
+            display: inline-block;
+            padding: 16px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 2px solid transparent;
+        }
+
+        .flex .module-button {
+            background: var(--primary);
+            color: white;
+        }
+
+        .flex .module-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+        }
+
+        .grid .module-button {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .grid .module-button:hover {
+            background: #6d28d9;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.25);
+        }
+
+        /* Learning path info */
+        .learning-path {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border: 2px solid var(--border);
+        }
+
+        .learning-path h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .path-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .path-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .path-box {
+            padding: 25px;
+            border-radius: 15px;
+            background: #f8fafc;
+        }
+
+        .path-box h3 {
+            margin-bottom: 20px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .path-box ol {
+            padding-left: 20px;
+        }
+
+        .path-box li {
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+
+        .path-box li strong {
+            color: var(--primary);
+        }
+
+        /* Recommendation */
+        .recommendation {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(124, 58, 237, 0.05));
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+            border-left: 6px solid var(--primary);
+            border-right: 6px solid var(--secondary);
+        }
+
+        .recommendation h2 {
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .recommendation p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #475569;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: auto;
+            padding-top: 40px;
+            color: #64748b;
+            border-top: 2px solid var(--border);
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .footer-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Animation for entrance */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .module-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .module-card.flex {
+            animation-delay: 0.1s;
+        }
+
+        .module-card.grid {
+            animation-delay: 0.3s;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header p {
+                font-size: 1.1rem;
+            }
+            
+            .module-card {
+                padding: 30px 20px;
+            }
+            
+            .module-title {
+                font-size: 1.8rem;
+            }
+            
+            .learning-path, .recommendation {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Helper for interactivity */
+        .selection-hint {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover .selection-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .flex .selection-hint {
+            background: var(--primary);
+        }
+
+        .grid .selection-hint {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with course title -->
+    <div class="header">
+        <h1>CSS Layout Mastery</h1>
+        <p>Welcome to the complete learning experience for modern CSS layout techniques. Master both Flexbox and CSS Grid to become a layout expert.</p>
+        <p class="subtitle">Choose your starting path below. Each module is self-contained, so you can learn in any order. Complete both to unlock full layout superpowers!</p>
+        
+        <!-- Course progress overview -->
+        <div class="course-progress">
+            <div class="course-progress-line"></div>
+            <div class="course-step">
+                <div class="step-icon">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+                <div class="step-label">Welcome</div>
+            </div>
+            <div class="course-step">
+                <div class="step-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="step-label">Choose Module</div>
+            </div>
+            <div class="course-step">
+                <div class="step-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="step-label">Learn & Practice</div>
+            </div>
+            <div class="course-step">
+                <div class="step-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="step-label">Master Layouts</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content: Module selection -->
+    <div class="modules-container">
+        <!-- Flexbox Module Card -->
+        <div class="module-card flex">
+            <div class="selection-hint">Click to start learning</div>
+            <div class="module-icon">
+                <i class="fas fa-arrows-alt-h"></i>
+            </div>
+            <h2 class="module-title">Flexbox Module</h2>
+            <p class="module-description">
+                Master one-dimensional layouts with CSS Flexbox. Perfect for components that need to align, distribute space, and respond to different screen sizes.
+            </p>
+            
+            <div class="module-features">
+                <h4><i class="fas fa-check-circle"></i> What You'll Learn:</h4>
+                <ul>
+                    <li>Flex containers and flex items</li>
+                    <li>Axis alignment (main and cross)</li>
+                    <li>Flex direction, wrap, and flow</li>
+                    <li>Justify-content and align-items</li>
+                    <li>Responsive flex layouts</li>
+                    <li>Real-world component building</li>
+                </ul>
+            </div>
+            
+            <a href="./flex/lesson1.1.html" class="module-button">
+                <i class="fas fa-play-circle"></i> Start Flexbox Module (6 Lessons)
+            </a>
+        </div>
+        
+        <!-- CSS Grid Module Card -->
+        <div class="module-card grid">
+            <div class="selection-hint">Click to start learning</div>
+            <div class="module-icon">
+                <i class="fas fa-th"></i>
+            </div>
+            <h2 class="module-title">CSS Grid Module</h2>
+            <p class="module-description">
+                Create powerful two-dimensional layouts with CSS Grid. Design complex page structures with precise control over rows and columns.
+            </p>
+            
+            <div class="module-features">
+                <h4><i class="fas fa-check-circle"></i> What You'll Learn:</h4>
+                <ul>
+                    <li>Grid containers and grid items</li>
+                    <li>Defining rows and columns</li>
+                    <li>The fr unit and flexible grids</li>
+                    <li>Grid template areas</li>
+                    <li>Auto-fit, minmax, and responsive grids</li>
+                    <li>Complete page layouts</li>
+                </ul>
+            </div>
+            
+            <a href="./grid/lesson2.1.html" class="module-button">
+                <i class="fas fa-play-circle"></i> Start Grid Module (6 Lessons)
+            </a>
+        </div>
+    </div>
+
+    <!-- Learning path information -->
+    <div class="learning-path">
+        <h2><i class="fas fa-map-signs"></i> Your Learning Journey</h2>
+        <div class="path-container">
+            <div class="path-box">
+                <h3><i class="fas fa-route" style="color: var(--primary);"></i> Recommended Path</h3>
+                <ol>
+                    <li><strong>Start with Flexbox</strong> if you're new to CSS layout systems</li>
+                    <li><strong>Learn core concepts</strong> of one-dimensional layout</li>
+                    <li><strong>Move to CSS Grid</strong> for two-dimensional layouts</li>
+                    <li><strong>Combine both</strong> techniques for advanced designs</li>
+                    <li><strong>Build real projects</strong> using your new skills</li>
+                </ol>
+            </div>
+            
+            <div class="path-box">
+                <h3><i class="fas fa-lightbulb" style="color: var(--secondary);"></i> Tips for Success</h3>
+                <ol>
+                    <li><strong>Complete all interactive demos</strong> in each lesson</li>
+                    <li><strong>Practice with the challenges</strong> to reinforce learning</li>
+                    <li><strong>Experiment with code</strong> in browser DevTools</li>
+                    <li><strong>Take notes</strong> on key concepts and properties</li>
+                    <li><strong>Review previous lessons</strong> if you need a refresher</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendation section -->
+    <div class="recommendation">
+        <h2><i class="fas fa-star"></i> Which Should You Learn First?</h2>
+        <p>
+            <strong>Flexbox</strong> is excellent for components and smaller-scale layouts (navigation bars, cards, form elements). 
+            <strong>CSS Grid</strong> excels at page-level layouts and complex two-dimensional designs.
+        </p>
+        <p>
+            Most developers start with Flexbox as it's slightly easier to grasp initially, but both are essential for modern web development.
+            You can't go wrong with either choice!
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>CSS Layout Mastery Course • Created for aspiring web developers</p>
+        <p>Complete both modules to earn the <strong>CSS Layout Expert</strong> badge</p>
+        
+        <div class="footer-links">
+            <a href="#" class="footer-link">
+                <i class="fas fa-question-circle"></i> Course FAQ
+            </a>
+            <a href="#" class="footer-link">
+                <i class="fas fa-download"></i> Download Exercises
+            </a>
+            <a href="#" class="footer-link">
+                <i class="fas fa-envelope"></i> Contact Instructor
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const moduleCards = document.querySelectorAll('.module-card');
+            
+            moduleCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't trigger if clicking on the button itself
+                    if (!e.target.closest('.module-button')) {
+                        const link = this.querySelector('.module-button');
+                        if (link) {
+                            // Add a quick feedback animation
+                            this.style.transform = 'scale(0.98)';
+                            setTimeout(() => {
+                                this.style.transform = '';
+                            }, 150);
+                            
+                            // Optional: Show a message before redirecting
+                            const moduleName = this.classList.contains('flex') ? 'Flexbox' : 'CSS Grid';
+                            console.log(`Starting ${moduleName} module...`);
+                        }
+                    }
+                });
+            });
+            
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '1' || e.key === 'f') {
+                    document.querySelector('.module-card.flex .module-button').focus();
+                } else if (e.key === '2' || e.key === 'g') {
+                    document.querySelector('.module-card.grid .module-button').focus();
+                }
+            });
+            
+            // Add a welcome message in console
+            console.log('%c🎨 Welcome to CSS Layout Mastery!', 'color: #2563eb; font-size: 16px; font-weight: bold;');
+            console.log('%cChoose your path to become a layout expert!', 'color: #7c3aed; font-size: 14px;');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 1.4 - Align Items: Cross-Axis Alignment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .review-code {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Cross axis reminder */
+        .axis-reminder {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .axis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .axis-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .axis-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .axis-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .axis-visual {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .axis-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .axis-diagram {
+            height: 200px;
+            position: relative;
+            margin: 20px 0;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            overflow: hidden;
+        }
+
+        .main-axis {
+            position: absolute;
+            width: 80%;
+            height: 4px;
+            background: var(--danger);
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+        }
+
+        .cross-axis {
+            position: absolute;
+            width: 4px;
+            height: 80%;
+            background: var(--success);
+            left: 50%;
+            top: 10%;
+            transform: translateX(-50%);
+        }
+
+        .axis-label {
+            position: absolute;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .main-label {
+            background: var(--danger);
+            color: white;
+            top: 50%;
+            right: 8%;
+            transform: translateY(-50%);
+        }
+
+        .cross-label {
+            background: var(--success);
+            color: white;
+            top: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .flex-items {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .axis-item {
+            width: 50px;
+            height: 70px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* Align-items values showcase */
+        .align-showcase {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .showcase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .showcase-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .value-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .value-demo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .value-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .value-visual {
+            height: 150px;
+            margin: 20px 0;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+            padding: 15px;
+        }
+
+        .align-item {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stretch-visual {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .stretch-item {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-box {
+            width: 400px;
+            height: 250px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            display: flex;
+        }
+
+        .demo-item {
+            background: var(--secondary);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-item:nth-child(2) {
+            height: 120px;
+        }
+
+        .demo-item:nth-child(3) {
+            height: 80px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        select:focus, input:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* The Magic of Center */
+        .center-magic {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .magic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .magic-header h3 {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .magic-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .magic-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .magic-example {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .magic-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .magic-visual {
+            height: 180px;
+            margin: 20px 0;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+            padding: 15px;
+            position: relative;
+        }
+
+        .magic-box {
+            width: 120px;
+            height: 80px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        /* Real world examples */
+        .real-world {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .real-world-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .real-world-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .example-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .showcase-item {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .showcase-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .showcase-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .showcase-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+        }
+
+        .card-grid-visual {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            align-items: stretch;
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .card-content {
+            flex: 1;
+            background: #f1f5f9;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .center-form-visual {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-box {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .showcase-item-code {
+            font-family: 'Courier New', monospace;
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        /* Baseline special section */
+        .baseline-special {
+            background: rgba(217, 119, 6, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--warning);
+        }
+
+        .baseline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .baseline-header h3 {
+            color: var(--warning);
+            margin: 0;
+        }
+
+        .baseline-container {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 768px) {
+            .baseline-container {
+                flex-direction: column;
+            }
+        }
+
+        .baseline-explanation {
+            flex: 1;
+        }
+
+        .baseline-visual {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            border: 2px solid var(--border);
+        }
+
+        .baseline-demo {
+            height: 150px;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .baseline-item {
+            background: var(--warning);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .baseline-item:nth-child(1) {
+            font-size: 1.8rem;
+            padding-top: 30px;
+        }
+
+        .baseline-item:nth-child(2) {
+            font-size: 1.2rem;
+            padding-top: 20px;
+        }
+
+        .baseline-item:nth-child(3) {
+            font-size: 2rem;
+            padding-top: 40px;
+        }
+
+        .baseline-line {
+            position: relative;
+            width: 100%;
+            height: 2px;
+            background: var(--danger);
+            margin-top: 10px;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 280px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-box {
+            width: 400px;
+            height: 250px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            display: flex;
+        }
+
+        .challenge-item {
+            background: var(--warning);
+            color: white;
+            padding: 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-container, .magic-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .example-showcase {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-box, #challenge-box {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Code highlighting */
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        .code-selector {
+            color: #fbbf24;
+        }
+
+        /* Special highlight for align-items */
+        .highlight {
+            background: rgba(255, 242, 200, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .highlight strong {
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step completed">
+            <div class="step-number">1.1</div>
+            <div class="step-label">Display & Flex Intro</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.2</div>
+            <div class="step-label">Flex Direction</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.3</div>
+            <div class="step-label">Justify Content</div>
+        </div>
+        <div class="progress-step current">
+            <div class="step-number">1.4</div>
+            <div class="step-label">Align Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.5</div>
+            <div class="step-label">Flex Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.6</div>
+            <div class="step-label">Flex Wrap & Gap</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>Align Items: Cross-Axis Alignment</h1>
+        <p class="lesson-goal">Master vertical alignment and cross-axis control for perfect layouts</p>
+        <div class="module-tag">
+            <i class="fas fa-layer-group"></i> Module 1: Flexbox Fundamentals • Lesson 4 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> Quick Review: Justify Content & Main Axis</h3>
+        <p>In Lesson 1.3, you learned about distributing items along the main axis with justify-content:</p>
+        
+        <div class="review-grid">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--danger);">
+                    <i class="fas fa-arrows-alt-h"></i>
+                </div>
+                <h4>Main Axis</h4>
+                <p>Primary flow direction (horizontal for row)</p>
+                <div class="review-code">justify-content: center;</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-arrows-alt-v"></i>
+                </div>
+                <h4>Cross Axis</h4>
+                <p>Perpendicular direction (vertical for row)</p>
+                <div class="review-code">align-items: ???</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h4>Axis Swap</h4>
+                <p>Row → cross axis is vertical<br>Column → cross axis is horizontal</p>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--secondary);">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h4>Today's Question</h4>
+                <p>How do we align items along the cross axis (vertical alignment)?</p>
+                <div class="review-code">The missing piece: align-items</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-align-center"></i> Introducing align-items</h2>
+        
+        <div class="explanation">
+            <p><strong>align-items</strong> is a CSS property that controls how flex items are aligned <em>along the cross axis</em> of the flex container. While <code>justify-content</code> handles main axis distribution, <code>align-items</code> handles cross axis alignment - the "vertical" alignment for horizontal layouts!</p>
+        </div>
+
+        <div class="analogy">
+            <strong>🏢 Office Building Analogy</strong>
+            <p>Imagine arranging people in an office with rows of desks:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>stretch (default):</strong> Everyone stands tall, touching floor and ceiling</li>
+                <li><strong>flex-start:</strong> Everyone stands at the top of their space</li>
+                <li><strong>flex-end:</strong> Everyone stands at the bottom of their space</li>
+                <li><strong>center:</strong> Everyone stands in the middle of their space</li>
+                <li><strong>baseline:</strong> Everyone aligns their name tags at the same height</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <p><strong>💡 The Magic of Center:</strong> For years, vertically centering elements in CSS was notoriously difficult. With <code>align-items: center</code> in a flex container, it becomes trivial! This one property solves a major historical CSS pain point.</p>
+        </div>
+    </div>
+
+    <!-- Cross axis reminder -->
+    <div class="axis-reminder">
+        <div class="axis-header">
+            <h3><i class="fas fa-crosshairs"></i> Visual Guide: Cross Axis Direction</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-map"></i> Your Alignment Highway
+            </div>
+        </div>
+
+        <p>Align-items distributes items along this green line (the cross axis):</p>
+
+        <div class="axis-container">
+            <div class="axis-visual">
+                <div class="axis-title">flex-direction: row (Default)</div>
+                <div class="axis-diagram">
+                    <div class="main-axis" style="background: var(--danger);"></div>
+                    <div class="cross-axis" style="background: var(--success);"></div>
+                    <div class="axis-label main-label">Main Axis</div>
+                    <div class="axis-label cross-label">Cross Axis</div>
+                    <div class="flex-items">
+                        <div class="axis-item">A</div>
+                        <div class="axis-item">B</div>
+                        <div class="axis-item">C</div>
+                    </div>
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;"><i class="fas fa-info-circle"></i> Main axis = red (horizontal)<br>Cross axis = green (vertical)</p>
+            </div>
+
+            <div class="axis-visual">
+                <div class="axis-title">flex-direction: column</div>
+                <div class="axis-diagram">
+                    <div class="main-axis" style="background: var(--danger); transform: translateY(-50%) rotate(90deg);"></div>
+                    <div class="cross-axis" style="background: var(--success); transform: translateX(-50%) rotate(90deg);"></div>
+                    <div class="axis-label main-label" style="top: 85%; left: 50%; transform: translateX(-50%);">Main Axis</div>
+                    <div class="axis-label cross-label" style="top: 50%; right: 8%; transform: translateY(-50%);">Cross Axis</div>
+                    <div class="flex-items" style="flex-direction: column; gap: 15px;">
+                        <div class="axis-item">A</div>
+                        <div class="axis-item">B</div>
+                        <div class="axis-item">C</div>
+                    </div>
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;"><i class="fas fa-info-circle"></i> Main axis = red (vertical)<br>Cross axis = green (horizontal)</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-exchange-alt"></i>
+                <strong>Key Reminder:</strong> The cross axis is always perpendicular to the main axis. When you change <code>flex-direction</code>, the cross axis swaps too! <code>align-items</code> always works on the cross axis, whatever direction that may be.
+            </p>
+        </div>
+    </div>
+
+    <!-- Align-items values showcase -->
+    <div class="align-showcase">
+        <div class="showcase-header">
+            <h3><i class="fas fa-grip-vertical"></i> The Five align-items Values</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-sliders-h"></i> 5 Alignment Options
+            </div>
+        </div>
+        
+        <p>Here are all five values for <code>align-items</code> with visual examples:</p>
+
+        <div class="values-grid">
+            <div class="value-demo">
+                <div class="value-title">stretch (default)</div>
+                <p>Items stretch to fill the container cross-axis</p>
+                <div class="value-visual">
+                    <div class="stretch-visual">
+                        <div class="stretch-item" style="height: 100%;">1</div>
+                        <div class="stretch-item" style="height: 100%;">2</div>
+                        <div class="stretch-item" style="height: 100%;">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;align-items: stretch;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">flex-start</div>
+                <p>Items align to start of cross axis</p>
+                <div class="value-visual">
+                    <div style="display: flex; align-items: flex-start; width: 100%; height: 100%; gap: 10px; padding-top: 10px;">
+                        <div class="align-item" style="height: 60%;">1</div>
+                        <div class="align-item" style="height: 80%;">2</div>
+                        <div class="align-item" style="height: 40%;">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;align-items: flex-start;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">flex-end</div>
+                <p>Items align to end of cross axis</p>
+                <div class="value-visual">
+                    <div style="display: flex; align-items: flex-end; width: 100%; height: 100%; gap: 10px; padding-bottom: 10px;">
+                        <div class="align-item" style="height: 60%;">1</div>
+                        <div class="align-item" style="height: 80%;">2</div>
+                        <div class="align-item" style="height: 40%;">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;align-items: flex-end;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">center</div>
+                <p>Items center along cross axis</p>
+                <div class="value-visual">
+                    <div style="display: flex; align-items: center; width: 100%; height: 100%; gap: 10px;">
+                        <div class="align-item" style="height: 60%;">1</div>
+                        <div class="align-item" style="height: 80%;">2</div>
+                        <div class="align-item" style="height: 40%;">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;align-items: center;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">baseline</div>
+                <p>Items align by their text baseline</p>
+                <div class="value-visual">
+                    <div style="display: flex; align-items: baseline; width: 100%; height: 100%; gap: 10px; padding-top: 30px;">
+                        <div class="align-item" style="height: 60%; font-size: 1.8rem;">A</div>
+                        <div class="align-item" style="height: 80%; font-size: 1.2rem;">B</div>
+                        <div class="align-item" style="height: 40%; font-size: 2rem;">C</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;align-items: baseline;<br>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> Interactive Alignment Playground</h3>
+            <div style="color: var(--primary); font-weight: 600;">
+                <i class="fas fa-gamepad"></i> Experiment Live
+            </div>
+        </div>
+
+        <p>Try different align-items values with items of different heights. Watch how they align along the cross axis!</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="align-select">
+                        <i class="fas fa-align-center"></i> Choose align-items
+                    </label>
+                    <select id="align-select">
+                        <option value="stretch">stretch (default)</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center" selected>center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="direction-select">
+                        <i class="fas fa-arrows-alt-h"></i> Change Flex Direction
+                    </label>
+                    <select id="direction-select">
+                        <option value="row">row (cross axis = vertical)</option>
+                        <option value="column">column (cross axis = horizontal)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-code"></i> Current CSS
+                    </label>
+                    <div id="current-css" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.container {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-direction: row;<br>
+&nbsp;&nbsp;justify-content: center;<br>
+&nbsp;&nbsp;align-items: center;<br>
+}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-info-circle"></i> Cross Axis Info
+                    </label>
+                    <div id="axis-info" style="padding: 15px; background: white; border-radius: 8px; border: 2px solid var(--border);">
+                        <p style="margin: 0 0 10px 0; font-weight: 600; color: var(--success);">Cross Axis: Vertical (↑↓)</p>
+                        <p style="margin: 0; font-size: 0.9rem; color: #64748b;">align-items controls alignment along this axis</p>
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="applyAlignment()">
+                        <i class="fas fa-play"></i> Apply Alignment
+                    </button>
+                    <button onclick="resetDemo()" style="background: var(--danger);">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Pro Tip:</strong> <code>align-items: center</code> combined with <code>justify-content: center</code> gives you perfect centering in both directions!
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-box" id="demo-container">
+                    <div class="demo-item" style="height: 100px;">Tall</div>
+                    <div class="demo-item" style="height: 150px;">Taller</div>
+                    <div class="demo-item" style="height: 80px;">Short</div>
+                </div>
+                <div style="width: 100%; text-align: center;">
+                    <div style="display: inline-block; padding: 8px 20px; background: var(--success); color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                        Cross Axis Direction ↑↓
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Green arrow shows cross axis direction. Items have different heights to show alignment.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Magic of Center -->
+    <div class="center-magic">
+        <div class="magic-header">
+            <h3><i class="fas fa-magic"></i> The Magic of Perfect Centering</h3>
+            <div style="color: var(--secondary); font-weight: 600;">
+                <i class="fas fa-star"></i> Historical CSS Problem Solved!
+            </div>
+        </div>
+
+        <p>For years, vertically centering elements was one of the hardest things in CSS. Flexbox makes it trivial with just two lines:</p>
+
+        <div class="magic-container">
+            <div class="magic-example">
+                <div class="magic-title">Before Flexbox (Hard!)</div>
+                <p>Multiple techniques, all complicated:</p>
+                <div class="magic-visual">
+                    <div style="position: relative; width: 100%; height: 100%;">
+                        <div class="magic-box" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                            Centered
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+<span class="code-comment">/* Multiple techniques needed */</span><br>
+.centered {<br>
+&nbsp;&nbsp;position: absolute;<br>
+&nbsp;&nbsp;top: 50%;<br>
+&nbsp;&nbsp;left: 50%;<br>
+&nbsp;&nbsp;transform: translate(-50%, -50%);<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> Complex, breaks flow, positioning issues</p>
+            </div>
+            
+            <div class="magic-example">
+                <div class="magic-title">With Flexbox (Easy!)</div>
+                <p>Two simple properties:</p>
+                <div class="magic-visual">
+                    <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                        <div class="magic-box">
+                            Centered
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+<span class="code-comment">/* Simple flexbox centering */</span><br>
+.container {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;justify-content: center;<br>
+&nbsp;&nbsp;align-items: center;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-check-circle"></i> Simple, maintains flow, responsive</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--secondary);">
+                <i class="fas fa-bolt"></i>
+                <strong>The Flexbox Centering Formula:</strong> <code>display: flex;</code> + <code>justify-content: center;</code> + <code>align-items: center;</code> = Perfect centering in both directions!
+            </p>
+        </div>
+    </div>
+
+    <!-- Baseline special section -->
+    <div class="baseline-special">
+        <div class="baseline-header">
+            <h3><i class="fas fa-text-height"></i> Special Value: baseline</h3>
+            <div style="color: var(--warning); font-weight: 600;">
+                <i class="fas fa-font"></i> Text Alignment
+            </div>
+        </div>
+
+        <div class="baseline-container">
+            <div class="baseline-explanation">
+                <p><strong>baseline</strong> is a special alignment value that aligns items based on their text baseline (the invisible line text sits on).</p>
+                
+                <div style="margin: 20px 0;">
+                    <p><i class="fas fa-lightbulb"></i> <strong>When to use it:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Forms with labels and inputs</li>
+                        <li>Navigation with different font sizes</li>
+                        <li>Anywhere text needs to line up regardless of element size</li>
+                    </ul>
+                </div>
+                
+                <div class="syntax-code" style="font-size: 0.9rem;">
+<span class="code-comment">/* Align form labels and inputs by text */</span><br>
+.form-group {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;align-items: baseline;<br>
+&nbsp;&nbsp;gap: 10px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="baseline-visual">
+                <p><strong>Visual Example:</strong> Items with different font sizes aligned by baseline</p>
+                <div class="baseline-demo">
+                    <div class="baseline-item">Big Text</div>
+                    <div class="baseline-item">Medium</div>
+                    <div class="baseline-item">Very Large</div>
+                </div>
+                <div class="baseline-line"></div>
+                <p style="text-align: center; margin-top: 10px; color: #64748b; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Red line shows baseline alignment
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real world examples -->
+    <div class="real-world">
+        <div class="real-world-header">
+            <h3><i class="fas fa-globe"></i> Real-World Applications</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-rocket"></i> Practical Layouts
+            </div>
+        </div>
+
+        <p>Here's how align-items creates common web layouts:</p>
+
+        <div class="example-showcase">
+            <div class="showcase-item">
+                <div class="showcase-title">Equal Height Cards (stretch)</div>
+                <p>Cards that automatically match heights in a row</p>
+                <div class="showcase-visual">
+                    <div class="card-grid-visual">
+                        <div class="card">
+                            <div class="card-header">Card 1</div>
+                            <div class="card-content">Short content</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Card 2</div>
+                            <div class="card-content">Medium length content that might wrap to multiple lines</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Card 3</div>
+                            <div class="card-content">Very short</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.card-grid {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;align-items: stretch; <span class="code-comment">/* Cards equal height */</span><br>
+&nbsp;&nbsp;gap: 20px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Perfectly Centered Content (center)</div>
+                <p>Hero sections, modals, loading spinners</p>
+                <div class="showcase-visual">
+                    <div class="center-form-visual">
+                        <div class="form-box">
+                            <div style="text-align: center; margin-bottom: 15px; font-weight: bold; color: var(--primary);">Login Form</div>
+                            <div style="height: 30px; background: #f1f5f9; border-radius: 5px; margin-bottom: 10px;"></div>
+                            <div style="height: 30px; background: #f1f5f9; border-radius: 5px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.modal {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;justify-content: center;<br>
+&nbsp;&nbsp;align-items: center;<br>
+&nbsp;&nbsp;min-height: 100vh;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Bottom-Aligned Footer (flex-end)</div>
+                <p>Sticky footers, chat messages, timestamp alignment</p>
+                <div class="showcase-visual">
+                    <div style="display: flex; align-items: flex-end; height: 100%; width: 100%; padding: 15px; gap: 15px;">
+                        <div style="background: var(--info); color: white; padding: 10px; border-radius: 10px 10px 10px 0; max-width: 70%;">
+                            Hello there!
+                        </div>
+                        <div style="background: var(--success); color: white; padding: 10px; border-radius: 10px 10px 0 10px; max-width: 70%; align-self: flex-end;">
+                            Hi! How are you?
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.chat-bubble {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;align-items: flex-end;<br>
+&nbsp;&nbsp;gap: 10px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Form Label Alignment (baseline)</div>
+                <p>Forms where labels and inputs align by text</p>
+                <div class="showcase-visual">
+                    <div style="display: flex; flex-direction: column; height: 100%; width: 100%; gap: 15px; padding: 15px;">
+                        <div style="display: flex; align-items: baseline; gap: 10px;">
+                            <div style="font-weight: bold; min-width: 80px;">Email:</div>
+                            <div style="height: 30px; background: #f1f5f9; border-radius: 5px; flex: 1;"></div>
+                        </div>
+                        <div style="display: flex; align-items: baseline; gap: 10px;">
+                            <div style="font-weight: bold; min-width: 80px; font-size: 1.2rem;">Password:</div>
+                            <div style="height: 30px; background: #f1f5f9; border-radius: 5px; flex: 1;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.form-row {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;align-items: baseline;<br>
+&nbsp;&nbsp;margin-bottom: 15px;<br>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge: Perfect Card Grid</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Create a card grid where cards have equal height regardless of content length.</p>
+                <ol>
+                    <li>Start with three cards containing different amounts of content</li>
+                    <li>Use <code>align-items</code> to make all cards the same height</li>
+                    <li>Center the card content vertically within each card</li>
+                    <li>Make sure the cards are spaced evenly horizontally</li>
+                    <li>Test different align-items values to see which one gives you equal heights</li>
+                </ol>
+                <p><strong>Hint:</strong> You'll need to use <code>align-items: stretch</code> on the container and then center content within each card!</p>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-box">
+                    <div class="challenge-item" style="flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="font-size: 1.5rem; margin-bottom: 10px;">Card 1</div>
+                        <div>Short content</div>
+                    </div>
+                    <div class="challenge-item" style="flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="font-size: 1.5rem; margin-bottom: 10px;">Card 2</div>
+                        <div>Medium length content that might wrap to multiple lines if needed</div>
+                    </div>
+                    <div class="challenge-item" style="flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="font-size: 1.5rem; margin-bottom: 10px;">Card 3</div>
+                        <div>Very short</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="testAlignment('stretch')">
+                    <i class="fas fa-wrench"></i> Test stretch
+                </button>
+                
+                <button class="challenge-btn" onclick="testAlignment('center')">
+                    <i class="fas fa-wrench"></i> Test center
+                </button>
+                
+                <button class="challenge-btn" onclick="testAlignment('flex-start')">
+                    <i class="fas fa-wrench"></i> Test flex-start
+                </button>
+                
+                <button class="challenge-btn" onclick="testAlignment('flex-end')">
+                    <i class="fas fa-wrench"></i> Test flex-end
+                </button>
+                
+                <button class="challenge-btn" onclick="showChallengeSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="challenge-solution" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* Solution for equal height cards */
+.card-grid {
+  display: flex;
+  align-items: stretch; /* Makes all cards same height */
+  justify-content: space-between; /* Even horizontal spacing */
+  gap: 20px;
+}
+
+.card {
+  flex: 1; /* Cards take equal width */
+  display: flex; /* Nested flex for card content */
+  flex-direction: column;
+  justify-content: center; /* Center content vertically within card */
+  align-items: center; /* Center content horizontally within card */
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    ↔️
+                </div>
+                <div class="takeaway-content">
+                    <h4>Cross Axis Control</h4>
+                    <p><code>align-items</code> aligns items along the cross axis (perpendicular to main).</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🎯
+                </div>
+                <div class="takeaway-content">
+                    <h4>Five Values</h4>
+                    <p><code>stretch</code>, <code>flex-start</code>, <code>flex-end</code>, <code>center</code>, <code>baseline</code></p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🪄
+                </div>
+                <div class="takeaway-content">
+                    <h4>Centering Magic</h4>
+                    <p><code>justify-content: center</code> + <code>align-items: center</code> = perfect centering.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📏
+                </div>
+                <div class="takeaway-content">
+                    <h4>Equal Heights</h4>
+                    <p><code>align-items: stretch</code> makes all items same height (or width for column).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="./lesson1.3.html" class="nav-btn prev-btn">
+            <i class="fas fa-arrow-left"></i> Previous: Justify Content
+        </a>
+        <a href="./lesson1.5.html" class="nav-btn next-btn">
+            Next: Flex Items
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 1, Lesson 4 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: align-items, cross axis alignment, vertical centering, baseline
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> You've mastered vertical alignment in CSS!
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const alignSelect = document.getElementById('align-select');
+        const directionSelect = document.getElementById('direction-select');
+        const demoContainer = document.getElementById('demo-container');
+        const currentCss = document.getElementById('current-css');
+        const axisInfo = document.getElementById('axis-info');
+        const challengeBox = document.getElementById('challenge-box');
+        const challengeSolution = document.getElementById('challenge-solution');
+        const feedback = document.getElementById('feedback');
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            alignSelect.addEventListener('change', updateCSSDisplay);
+            directionSelect.addEventListener('change', updateCSSDisplay);
+            
+            // Set initial state
+            updateCSSDisplay();
+        }
+
+        // Update CSS display
+        function updateCSSDisplay() {
+            const alignValue = alignSelect.value;
+            const directionValue = directionSelect.value;
+            
+            // Update CSS display
+            currentCss.textContent = `.container {\n  display: flex;\n  flex-direction: ${directionValue};\n  justify-content: center;\n  align-items: ${alignValue};\n}`;
+            
+            // Update axis info
+            let crossAxisDirection = '';
+            if (directionValue === 'row') {
+                crossAxisDirection = 'Vertical (↑↓)';
+            } else {
+                crossAxisDirection = 'Horizontal (←→)';
+            }
+            
+            axisInfo.innerHTML = `<p style="margin: 0 0 10px 0; font-weight: 600; color: var(--success);">Cross Axis: ${crossAxisDirection}</p>
+                                 <p style="margin: 0; font-size: 0.9rem; color: #64748b;">align-items controls alignment along this axis</p>`;
+        }
+
+        // Apply alignment settings to demo
+        function applyAlignment() {
+            const alignValue = alignSelect.value;
+            const directionValue = directionSelect.value;
+            
+            // Apply to demo container
+            demoContainer.style.alignItems = alignValue;
+            demoContainer.style.flexDirection = directionValue;
+            demoContainer.style.justifyContent = 'center';
+            
+            // Special handling for stretch
+            if (alignValue === 'stretch') {
+                const items = demoContainer.querySelectorAll('.demo-item');
+                items.forEach(item => {
+                    if (directionValue === 'row') {
+                        item.style.height = '100%';
+                        item.style.alignSelf = 'stretch';
+                    } else {
+                        item.style.width = '100%';
+                        item.style.alignSelf = 'stretch';
+                    }
+                });
+            } else {
+                // Reset heights/widths
+                const items = demoContainer.querySelectorAll('.demo-item');
+                items.forEach((item, index) => {
+                    if (directionValue === 'row') {
+                        item.style.height = index === 0 ? '100px' : index === 1 ? '150px' : '80px';
+                        item.style.alignSelf = '';
+                    } else {
+                        item.style.width = index === 0 ? '100px' : index === 1 ? '150px' : '80px';
+                        item.style.height = '';
+                        item.style.alignSelf = '';
+                    }
+                });
+            }
+            
+            // Update axis indicator
+            const axisIndicator = document.querySelector('.demo-preview > div:nth-child(2) > div');
+            if (directionValue === 'column') {
+                axisIndicator.innerHTML = 'Cross Axis Direction ←→';
+                axisIndicator.style.padding = '15px 8px';
+            } else {
+                axisIndicator.innerHTML = 'Cross Axis Direction ↑↓';
+                axisIndicator.style.padding = '8px 20px';
+            }
+            
+            showFeedback(`Applied align-items: ${alignValue} with direction: ${directionValue}`);
+        }
+
+        // Reset demo
+        function resetDemo() {
+            alignSelect.value = 'center';
+            directionSelect.value = 'row';
+            
+            updateCSSDisplay();
+            applyAlignment();
+            showFeedback('Reset to default settings (center, row)');
+        }
+
+        // Test alignment in challenge
+        function testAlignment(alignValue) {
+            challengeBox.style.alignItems = alignValue;
+            
+            // Special handling for stretch
+            if (alignValue === 'stretch') {
+                const items = challengeBox.querySelectorAll('.challenge-item');
+                items.forEach(item => {
+                    item.style.alignSelf = 'stretch';
+                });
+                showFeedback('Perfect! stretch makes all cards equal height');
+            } else {
+                const items = challengeBox.querySelectorAll('.challenge-item');
+                items.forEach(item => {
+                    item.style.alignSelf = '';
+                });
+                
+                if (alignValue === 'center') {
+                    showFeedback('center aligns card centers, but heights differ');
+                } else if (alignValue === 'flex-start') {
+                    showFeedback('flex-start aligns tops of cards');
+                } else if (alignValue === 'flex-end') {
+                    showFeedback('flex-end aligns bottoms of cards');
+                }
+            }
+        }
+
+        // Show challenge solution
+        function showChallengeSolution() {
+            // Show the solution
+            challengeSolution.style.display = 'block';
+            
+            // Apply the solution visually
+            challengeBox.style.alignItems = 'stretch';
+            challengeBox.style.justifyContent = 'space-between';
+            challengeBox.style.gap = '20px';
+            
+            // Make cards stretch
+            const items = challengeBox.querySelectorAll('.challenge-item');
+            items.forEach(item => {
+                item.style.alignSelf = 'stretch';
+                item.style.flex = '1';
+                item.style.padding = '30px 20px';
+            });
+            
+            showFeedback('Applied perfect card grid solution');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            // Reset to original structure
+            challengeBox.style.alignItems = 'stretch';
+            challengeBox.style.justifyContent = 'space-around';
+            challengeBox.style.gap = '15px';
+            
+            const items = challengeBox.querySelectorAll('.challenge-item');
+            items.forEach(item => {
+                item.style.alignSelf = '';
+                item.style.flex = '';
+                item.style.padding = '25px';
+            });
+            
+            challengeSolution.style.display = 'none';
+            showFeedback('Challenge reset to original');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 1.5 - Flex Items: Growing, Shrinking, and Basis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .review-code {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* The Three Musketeers */
+        .musketeers {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .musketeers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .musketeers-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .musketeers-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .musketeers-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .musketeer {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .musketeer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .musketeer-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .musketeer-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--info);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+
+        .musketeer-formula {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-box {
+            width: 400px;
+            height: 180px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            display: flex;
+        }
+
+        .demo-item {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        select:focus, input:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Shorthand explanation */
+        .shorthand {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .shorthand-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .shorthand-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .shorthand-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .shorthand-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .shorthand-example {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .shorthand-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .shorthand-visual {
+            background: #1e293b;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        .shorthand-equation {
+            background: rgba(255, 242, 200, 0.5);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--warning);
+        }
+
+        /* Real world examples */
+        .real-world {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .real-world-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .real-world-header h3 {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .example-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .showcase-item {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .showcase-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .showcase-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .showcase-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+        }
+
+        .sidebar-layout {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-content {
+            background: var(--success);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .flexible-columns {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .flexible-column {
+            background: var(--warning);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .showcase-item-code {
+            font-family: 'Courier New', monospace;
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 250px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-box {
+            width: 400px;
+            height: 220px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            display: flex;
+        }
+
+        .challenge-item {
+            background: var(--warning);
+            color: white;
+            padding: 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .musketeers-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-container, .shorthand-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .example-showcase {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-box, #challenge-box {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Code highlighting */
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        .code-selector {
+            color: #fbbf24;
+        }
+
+        /* Special highlight for flex properties */
+        .highlight {
+            background: rgba(255, 242, 200, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .highlight strong {
+            color: var(--warning);
+        }
+
+        /* Flex item styles */
+        .item-1 { background: var(--primary); }
+        .item-2 { background: var(--success); }
+        .item-3 { background: var(--warning); }
+        .item-4 { background: var(--danger); }
+        .item-5 { background: var(--secondary); }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step completed">
+            <div class="step-number">1.1</div>
+            <div class="step-label">Display & Flex Intro</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.2</div>
+            <div class="step-label">Flex Direction</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.3</div>
+            <div class="step-label">Justify Content</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.4</div>
+            <div class="step-label">Align Items</div>
+        </div>
+        <div class="progress-step current">
+            <div class="step-number">1.5</div>
+            <div class="step-label">Flex Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.6</div>
+            <div class="step-label">Flex Wrap & Gap</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>Flex Items: Growing, Shrinking, and Basis</h1>
+        <p class="lesson-goal">Master how to control individual flex items with flex-grow, flex-shrink, and flex-basis</p>
+        <div class="module-tag">
+            <i class="fas fa-layer-group"></i> Module 1: Flexbox Fundamentals • Lesson 5 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> Quick Review: Container vs Item Properties</h3>
+        <p>In Lessons 1.1-1.4, you learned about container properties. Now we dive into <strong>item properties</strong>:</p>
+        
+        <div class="review-grid">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--primary);">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h4>Container Properties</h4>
+                <p>Applied to the parent element</p>
+                <div class="review-code">display: flex;<br>flex-direction<br>justify-content<br>align-items</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <h4>Item Properties</h4>
+                <p>Applied to individual children</p>
+                <div class="review-code">flex-grow<br>flex-shrink<br>flex-basis</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <h4>The flex Property</h4>
+                <p>Shorthand for all three item properties</p>
+                <div class="review-code">flex: 1;</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--secondary);">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h4>Today's Question</h4>
+                <p>How do we control individual item sizes and flexibility?</p>
+                <div class="review-code">flex: ???</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-expand-arrows-alt"></i> Introducing Item Flexibility</h2>
+        
+        <div class="explanation">
+            <p><strong>Flex item properties</strong> give you control over how individual items behave within a flex container. While container properties control overall layout, item properties let you make specific items grow, shrink, or maintain specific sizes.</p>
+        </div>
+
+        <div class="analogy">
+            <strong>🎪 Theater Seating with Friends Analogy</strong>
+            <p>Imagine you're in a theater with friends of different sizes:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>flex-grow:</strong> When there's extra space, who gets more? (Bigger friends get more space)</li>
+                <li><strong>flex-shrink:</strong> When space is tight, who shrinks more? (Some friends are more compressible)</li>
+                <li><strong>flex-basis:</strong> What's everyone's starting size before growing/shrinking? (Natural seat size)</li>
+                <li><strong>flex:</strong> The combination ticket for all three!</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <p><strong>💡 Key Insight:</strong> The <code>flex</code> property is actually a shorthand for <code>flex-grow</code>, <code>flex-shrink</code>, and <code>flex-basis</code>. When you write <code>flex: 1</code>, it's actually <code>flex: 1 1 0%</code> (grow: 1, shrink: 1, basis: 0%).</p>
+        </div>
+    </div>
+
+    <!-- The Three Musketeers -->
+    <div class="musketeers">
+        <div class="musketeers-header">
+            <h3><i class="fas fa-users"></i> The Three Musketeers of Flex Items</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-magic"></i> A Powerful Trio
+            </div>
+        </div>
+
+        <p>These three properties work together to control item sizing:</p>
+
+        <div class="musketeers-container">
+            <div class="musketeer">
+                <div class="musketeer-icon">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="musketeer-title">flex-grow</div>
+                <p>Controls how much an item grows relative to others when there's extra space</p>
+                <div class="musketeer-formula">
+                    flex-grow: <strong>0</strong> (default: don't grow)<br>
+                    flex-grow: <strong>1</strong> (grow equally)<br>
+                    flex-grow: <strong>2</strong> (grow twice as much)
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;"><i class="fas fa-info-circle"></i> Only applies when there's extra space in the container</p>
+            </div>
+
+            <div class="musketeer">
+                <div class="musketeer-icon">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+                <div class="musketeer-title">flex-shrink</div>
+                <p>Controls how much an item shrinks relative to others when space is limited</p>
+                <div class="musketeer-formula">
+                    flex-shrink: <strong>1</strong> (default: shrink)<br>
+                    flex-shrink: <strong>0</strong> (don't shrink)<br>
+                    flex-shrink: <strong>2</strong> (shrink twice as much)
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;"><i class="fas fa-info-circle"></i> Only applies when items overflow the container</p>
+            </div>
+
+            <div class="musketeer">
+                <div class="musketeer-icon">
+                    <i class="fas fa-ruler"></i>
+                </div>
+                <div class="musketeer-title">flex-basis</div>
+                <p>Sets the initial size of an item before growing or shrinking</p>
+                <div class="musketeer-formula">
+                    flex-basis: <strong>auto</strong> (default)<br>
+                    flex-basis: <strong>100px</strong> (fixed)<br>
+                    flex-basis: <strong>25%</strong> (percentage)
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;"><i class="fas fa-info-circle"></i> Think of it as "preferred size" or "starting point"</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-handshake"></i>
+                <strong>They Work Together:</strong> The browser first tries to give each item its <code>flex-basis</code> size. Then, if there's extra space, items <code>flex-grow</code>. If there's not enough space, items <code>flex-shrink</code>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> Interactive Flex Item Playground</h3>
+            <div style="color: var(--primary); font-weight: 600;">
+                <i class="fas fa-gamepad"></i> Experiment Live
+            </div>
+        </div>
+
+        <p>Control individual item properties. Watch how they grow, shrink, and start with different bases!</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="item-select">
+                        <i class="fas fa-cube"></i> Select Item to Control
+                    </label>
+                    <select id="item-select">
+                        <option value="item1">Item 1 (Blue)</option>
+                        <option value="item2">Item 2 (Green)</option>
+                        <option value="item3">Item 3 (Yellow)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="grow-slider">
+                        <i class="fas fa-arrow-up"></i> flex-grow: 
+                        <span id="grow-value" class="value-display">0</span>
+                    </label>
+                    <input type="range" id="grow-slider" min="0" max="3" step="1" value="0">
+                </div>
+
+                <div class="control-group">
+                    <label for="shrink-slider">
+                        <i class="fas fa-arrow-down"></i> flex-shrink: 
+                        <span id="shrink-value" class="value-display">1</span>
+                    </label>
+                    <input type="range" id="shrink-slider" min="0" max="3" step="1" value="1">
+                </div>
+
+                <div class="control-group">
+                    <label for="basis-select">
+                        <i class="fas fa-ruler"></i> flex-basis
+                    </label>
+                    <select id="basis-select">
+                        <option value="auto">auto (default)</option>
+                        <option value="100px">100px</option>
+                        <option value="150px">150px</option>
+                        <option value="200px">200px</option>
+                        <option value="25%">25%</option>
+                        <option value="50%">50%</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-code"></i> Current CSS for Selected Item
+                    </label>
+                    <div id="current-css" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.item1 {<br>
+&nbsp;&nbsp;flex-grow: 0;<br>
+&nbsp;&nbsp;flex-shrink: 1;<br>
+&nbsp;&nbsp;flex-basis: auto;<br>
+}
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="applyFlexSettings()">
+                        <i class="fas fa-play"></i> Apply Settings
+                    </button>
+                    <button onclick="resetDemo()" style="background: var(--danger);">
+                        <i class="fas fa-redo"></i> Reset All
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Experiment:</strong> Try making one item grow more than others, or prevent an item from shrinking!
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-box" id="demo-container">
+                    <div class="demo-item item-1" id="item1">Item 1</div>
+                    <div class="demo-item item-2" id="item2">Item 2</div>
+                    <div class="demo-item item-3" id="item3">Item 3</div>
+                </div>
+                <div style="width: 100%; text-align: center;">
+                    <div style="display: inline-block; padding: 8px 20px; background: var(--primary); color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                        Container Width: <span id="container-width">400px</span>
+                    </div>
+                    <div style="display: inline-block; padding: 8px 20px; background: var(--success); color: white; border-radius: 5px; font-weight: bold; margin-left: 10px;">
+                        <button onclick="toggleContainerSize()" style="background: transparent; border: none; color: white; font-weight: bold; cursor: pointer;">
+                            <i class="fas fa-expand-alt"></i> Toggle Size
+                        </button>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Toggle container size to see grow/shrink behavior in action!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shorthand explanation -->
+    <div class="shorthand">
+        <div class="shorthand-header">
+            <h3><i class="fas fa-file-contract"></i> The flex Shorthand</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-bolt"></i> Most Commonly Used
+            </div>
+        </div>
+
+        <p>Instead of writing three separate properties, you'll almost always use the <code>flex</code> shorthand. Here's how it works:</p>
+
+        <div class="shorthand-container">
+            <div class="shorthand-example">
+                <div class="shorthand-title">Common flex Values</div>
+                <div class="shorthand-visual">
+<span class="code-comment">/* Most common: equal flexible items */</span><br>
+<span class="code-property">flex</span>: <span class="code-value">1</span>;<br>
+<span class="code-comment">/* Equivalent to: */</span><br>
+flex-grow: 1;<br>
+flex-shrink: 1;<br>
+flex-basis: 0%;<br><br>
+
+<span class="code-comment">/* Fixed size, won't grow or shrink */</span><br>
+<span class="code-property">flex</span>: <span class="code-value">0 0 200px</span>;<br>
+<span class="code-comment">/* Equivalent to: */</span><br>
+flex-grow: 0;<br>
+flex-shrink: 0;<br>
+flex-basis: 200px;<br><br>
+
+<span class="code-comment">/* Grow twice as much, shrink normally */</span><br>
+<span class="code-property">flex</span>: <span class="code-value">2</span>;<br>
+<span class="code-comment">/* Equivalent to: */</span><br>
+flex-grow: 2;<br>
+flex-shrink: 1;<br>
+flex-basis: 0%;
+                </div>
+            </div>
+            
+            <div class="shorthand-example">
+                <div class="shorthand-title">Understanding the Formula</div>
+                
+                <div class="shorthand-equation">
+                    <p><strong>flex: [grow] [shrink] [basis]</strong></p>
+                    <p>Three values in order: grow, shrink, basis</p>
+                </div>
+                
+                <div class="shorthand-visual">
+<span class="code-comment">/* Single value syntaxes */</span><br>
+<span class="code-property">flex</span>: <span class="code-value">initial</span>; <span class="code-comment">/* 0 1 auto */</span><br>
+<span class="code-property">flex</span>: <span class="code-value">auto</span>;    <span class="code-comment">/* 1 1 auto */</span><br>
+<span class="code-property">flex</span>: <span class="code-value">none</span>;    <span class="code-comment">/* 0 0 auto */</span><br><br>
+
+<span class="code-comment">/* Two values: grow and basis */</span><br>
+<span class="code-property">flex</span>: <span class="code-value">2 200px</span>;<br>
+<span class="code-comment">/* Equivalent to: */</span><br>
+flex-grow: 2;<br>
+flex-shrink: 1; <span class="code-comment">/* default */</span><br>
+flex-basis: 200px;<br><br>
+
+<span class="code-comment">/* Two values: grow and shrink */</span><br>
+<span class="code-property">flex</span>: <span class="code-value">2 0</span>;<br>
+<span class="code-comment">/* Equivalent to: */</span><br>
+flex-grow: 2;<br>
+flex-shrink: 0;<br>
+flex-basis: 0%; <span class="code-comment">/* default */</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--success);">
+                <i class="fas fa-graduation-cap"></i>
+                <strong>Pro Developer Tip:</strong> You'll use <code>flex: 1</code> or <code>flex: auto</code> 90% of the time. Use <code>flex: none</code> for fixed-size items like logos. Use <code>flex: 0 0 250px</code> for exact fixed sizes that shouldn't change.
+            </p>
+        </div>
+    </div>
+
+    <!-- Real world examples -->
+    <div class="real-world">
+        <div class="real-world-header">
+            <h3><i class="fas fa-globe"></i> Real-World Applications</h3>
+            <div style="color: var(--secondary); font-weight: 600;">
+                <i class="fas fa-rocket"></i> Practical Layouts
+            </div>
+        </div>
+
+        <p>Here's how flex item properties create common web layouts:</p>
+
+        <div class="example-showcase">
+            <div class="showcase-item">
+                <div class="showcase-title">Sidebar + Main Content Layout</div>
+                <p>Fixed sidebar with flexible main content area</p>
+                <div class="showcase-visual">
+                    <div class="sidebar-layout">
+                        <div class="sidebar" style="flex: 0 0 150px;">Sidebar</div>
+                        <div class="main-content" style="flex: 1;">Main Content</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.sidebar {<br>
+&nbsp;&nbsp;flex: 0 0 150px; /* Fixed width */<br>
+}<br>
+.main-content {<br>
+&nbsp;&nbsp;flex: 1; /* Takes remaining space */<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Flexible Column Grid</div>
+                <p>Columns that grow proportionally to their content priority</p>
+                <div class="showcase-visual">
+                    <div class="flexible-columns">
+                        <div class="flexible-column" style="flex: 1;">Col 1 (flex: 1)</div>
+                        <div class="flexible-column" style="flex: 2;">Col 2 (flex: 2)</div>
+                        <div class="flexible-column" style="flex: 1;">Col 3 (flex: 1)</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.column-1 { flex: 1; }<br>
+.column-2 { flex: 2; } /* Twice as wide */<br>
+.column-3 { flex: 1; }<br>
+<span class="code-comment">/* Ratio: 1:2:1 */</span>
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Fixed Header/Footer with Flexible Content</div>
+                <p>Common page layout pattern</p>
+                <div class="showcase-visual">
+                    <div style="display: flex; flex-direction: column; height: 100%; width: 100%;">
+                        <div style="background: var(--primary); color: white; padding: 10px; border-radius: 5px; text-align: center; flex: 0 0 40px;">
+                            Header (flex: 0 0 40px)
+                        </div>
+                        <div style="background: var(--success); color: white; padding: 10px; border-radius: 5px; text-align: center; flex: 1; margin: 10px 0;">
+                            Content (flex: 1)
+                        </div>
+                        <div style="background: var(--warning); color: white; padding: 10px; border-radius: 5px; text-align: center; flex: 0 0 30px;">
+                            Footer (flex: 0 0 30px)
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.page {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-direction: column;<br>
+&nbsp;&nbsp;min-height: 100vh;<br>
+}<br>
+.header { flex: 0 0 60px; }<br>
+.content { flex: 1; }<br>
+.footer { flex: 0 0 40px; }
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Non-shrinking Important Content</div>
+                <p>Critical content that should never shrink below its size</p>
+                <div class="showcase-visual">
+                    <div class="flexible-columns">
+                        <div class="flexible-column" style="flex: 0 0 100px; background: var(--danger);">Logo (no shrink)</div>
+                        <div class="flexible-column" style="flex: 1;">Nav (flexible)</div>
+                        <div class="flexible-column" style="flex: 0 0 80px; background: var(--info);">Cart (no shrink)</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.logo {<br>
+&nbsp;&nbsp;flex: 0 0 100px; /* Won't grow or shrink */<br>
+}<br>
+.nav {<br>
+&nbsp;&nbsp;flex: 1; /* Takes available space */<br>
+}<br>
+.cart {<br>
+&nbsp;&nbsp;flex: 0 0 80px; /* Fixed size */<br>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge: Dashboard Layout</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Create a dashboard layout with a fixed sidebar and flexible main content area.</p>
+                <ol>
+                    <li>Start with a container holding a sidebar and main content area</li>
+                    <li>The sidebar should have a fixed width of 200px</li>
+                    <li>The main content should take up all remaining space</li>
+                    <li>Make sure the sidebar doesn't shrink if the container gets too small</li>
+                    <li>The main content should be able to grow and shrink as needed</li>
+                    <li>Test by toggling the container size in the demo above</li>
+                </ol>
+                <p><strong>Hint:</strong> You'll need <code>flex: 0 0 200px</code> for the sidebar and <code>flex: 1</code> for the main content!</p>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-box">
+                    <div class="challenge-item" id="challenge-sidebar">Sidebar<br>(200px fixed)</div>
+                    <div class="challenge-item" id="challenge-main">Main Content<br>(flexible)</div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="testDashboard('sidebar')">
+                    <i class="fas fa-wrench"></i> Fix Sidebar Only
+                </button>
+                
+                <button class="challenge-btn" onclick="testDashboard('main')">
+                    <i class="fas fa-wrench"></i> Make Main Flexible
+                </button>
+                
+                <button class="challenge-btn" onclick="testDashboard('both')">
+                    <i class="fas fa-wrench"></i> Apply Both
+                </button>
+                
+                <button class="challenge-btn" onclick="showChallengeSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="challenge-solution" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* Complete dashboard solution */
+.dashboard {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  flex: 0 0 200px; /* Fixed width, won't grow or shrink */
+  background: #2563eb;
+  color: white;
+  padding: 20px;
+}
+
+.main-content {
+  flex: 1; /* Takes all remaining space */
+  background: #f1f5f9;
+  padding: 20px;
+}
+
+/* Optional: Add responsive behavior */
+@media (max-width: 768px) {
+  .dashboard {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    flex: 0 0 60px; /* Smaller on mobile */
+  }
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🌱
+                </div>
+                <div class="takeaway-content">
+                    <h4>flex-grow</h4>
+                    <p>Controls growth when there's extra space. 0 = don't grow, 1+ = grow proportionally.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📉
+                </div>
+                <div class="takeaway-content">
+                    <h4>flex-shrink</h4>
+                    <p>Controls shrinking when space is limited. 0 = don't shrink, 1+ = shrink proportionally.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📏
+                </div>
+                <div class="takeaway-content">
+                    <h4>flex-basis</h4>
+                    <p>Sets initial size before growing/shrinking. Can be auto, px, %, etc.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    ⚡
+                </div>
+                <div class="takeaway-content">
+                    <h4>flex Shorthand</h4>
+                    <p><code>flex: grow shrink basis</code>. Use <code>flex: 1</code> for equal flexible items.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="./lesson1.4.html" class="nav-btn prev-btn">
+            <i class="fas fa-arrow-left"></i> Previous: Align Items
+        </a>
+        <a href="./lesson1.6.html" class="nav-btn next-btn">
+            Next: Flex Wrap & Gap
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 1, Lesson 5 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: flex-grow, flex-shrink, flex-basis, flex shorthand
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> You can now control individual item sizing in flexbox!
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const itemSelect = document.getElementById('item-select');
+        const growSlider = document.getElementById('grow-slider');
+        const growValue = document.getElementById('grow-value');
+        const shrinkSlider = document.getElementById('shrink-slider');
+        const shrinkValue = document.getElementById('shrink-value');
+        const basisSelect = document.getElementById('basis-select');
+        const demoContainer = document.getElementById('demo-container');
+        const currentCss = document.getElementById('current-css');
+        const containerWidth = document.getElementById('container-width');
+        const challengeSidebar = document.getElementById('challenge-sidebar');
+        const challengeMain = document.getElementById('challenge-main');
+        const challengeSolution = document.getElementById('challenge-solution');
+        const feedback = document.getElementById('feedback');
+
+        let isSmallContainer = false;
+        let selectedItem = 'item1';
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            itemSelect.addEventListener('change', updateSelectedItem);
+            growSlider.addEventListener('input', updateGrowValue);
+            shrinkSlider.addEventListener('input', updateShrinkValue);
+            basisSelect.addEventListener('change', updateCSSDisplay);
+            
+            // Set initial state
+            updateSelectedItem();
+            updateGrowValue();
+            updateShrinkValue();
+            updateCSSDisplay();
+        }
+
+        // Update selected item
+        function updateSelectedItem() {
+            selectedItem = itemSelect.value;
+            updateCSSDisplay();
+            
+            // Highlight selected item
+            const items = demoContainer.querySelectorAll('.demo-item');
+            items.forEach(item => {
+                item.style.boxShadow = 'none';
+            });
+            
+            const selected = document.getElementById(selectedItem);
+            if (selected) {
+                selected.style.boxShadow = '0 0 0 3px var(--warning)';
+            }
+        }
+
+        // Update grow value display
+        function updateGrowValue() {
+            growValue.textContent = growSlider.value;
+            updateCSSDisplay();
+        }
+
+        // Update shrink value display
+        function updateShrinkValue() {
+            shrinkValue.textContent = shrinkSlider.value;
+            updateCSSDisplay();
+        }
+
+        // Update CSS display
+        function updateCSSDisplay() {
+            const grow = growSlider.value;
+            const shrink = shrinkSlider.value;
+            const basis = basisSelect.value;
+            
+            // Update CSS display
+            currentCss.textContent = `.${selectedItem} {\n  flex-grow: ${grow};\n  flex-shrink: ${shrink};\n  flex-basis: ${basis};\n}`;
+        }
+
+        // Apply flex settings to selected item
+        function applyFlexSettings() {
+            const grow = growSlider.value;
+            const shrink = shrinkSlider.value;
+            const basis = basisSelect.value;
+            
+            // Apply to selected item
+            const item = document.getElementById(selectedItem);
+            if (item) {
+                item.style.flexGrow = grow;
+                item.style.flexShrink = shrink;
+                item.style.flexBasis = basis;
+            }
+            
+            // Reset other items to default (so we can see the effect)
+            const otherItems = demoContainer.querySelectorAll('.demo-item:not(#' + selectedItem + ')');
+            otherItems.forEach(otherItem => {
+                if (otherItem.id !== selectedItem) {
+                    otherItem.style.flexGrow = '0';
+                    otherItem.style.flexShrink = '1';
+                    otherItem.style.flexBasis = 'auto';
+                }
+            });
+            
+            showFeedback(`Applied flex: ${grow} ${shrink} ${basis} to ${selectedItem}`);
+        }
+
+        // Toggle container size
+        function toggleContainerSize() {
+            isSmallContainer = !isSmallContainer;
+            
+            if (isSmallContainer) {
+                demoContainer.style.width = '300px';
+                containerWidth.textContent = '300px';
+                showFeedback('Container size: Small (testing shrink behavior)');
+            } else {
+                demoContainer.style.width = '400px';
+                containerWidth.textContent = '400px';
+                showFeedback('Container size: Normal (testing grow behavior)');
+            }
+        }
+
+        // Reset demo
+        function resetDemo() {
+            // Reset sliders and selects
+            itemSelect.value = 'item1';
+            growSlider.value = '0';
+            shrinkSlider.value = '1';
+            basisSelect.value = 'auto';
+            
+            // Reset container size
+            isSmallContainer = false;
+            demoContainer.style.width = '400px';
+            containerWidth.textContent = '400px';
+            
+            // Reset all items
+            const items = demoContainer.querySelectorAll('.demo-item');
+            items.forEach(item => {
+                item.style.flexGrow = '0';
+                item.style.flexShrink = '1';
+                item.style.flexBasis = 'auto';
+                item.style.boxShadow = 'none';
+            });
+            
+            // Highlight first item
+            document.getElementById('item1').style.boxShadow = '0 0 0 3px var(--warning)';
+            
+            updateSelectedItem();
+            updateGrowValue();
+            updateShrinkValue();
+            updateCSSDisplay();
+            showFeedback('Reset all items to defaults');
+        }
+
+        // Test dashboard layout
+        function testDashboard(part) {
+            if (part === 'sidebar' || part === 'both') {
+                challengeSidebar.style.flex = '0 0 200px';
+                challengeSidebar.style.background = 'var(--primary)';
+                challengeSidebar.style.color = 'white';
+            }
+            
+            if (part === 'main' || part === 'both') {
+                challengeMain.style.flex = '1';
+                challengeMain.style.background = 'var(--success)';
+                challengeMain.style.color = 'white';
+            }
+            
+            if (part === 'sidebar') {
+                showFeedback('Sidebar fixed at 200px (won\'t grow or shrink)');
+            } else if (part === 'main') {
+                showFeedback('Main content flexible (takes remaining space)');
+            } else if (part === 'both') {
+                showFeedback('Perfect! Fixed sidebar + flexible main content');
+            }
+        }
+
+        // Show challenge solution
+        function showChallengeSolution() {
+            // Show the solution
+            challengeSolution.style.display = 'block';
+            
+            // Apply the solution
+            testDashboard('both');
+            
+            // Add some styling to make it clearer
+            challengeSidebar.style.padding = '20px';
+            challengeMain.style.padding = '20px';
+            
+            showFeedback('Applied complete dashboard solution');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            // Reset to original
+            challengeSidebar.style.flex = '';
+            challengeSidebar.style.background = 'var(--warning)';
+            challengeSidebar.style.color = 'white';
+            challengeSidebar.style.padding = '25px';
+            
+            challengeMain.style.flex = '';
+            challengeMain.style.background = 'var(--warning)';
+            challengeMain.style.color = 'white';
+            challengeMain.style.padding = '25px';
+            
+            challengeSolution.style.display = 'none';
+            showFeedback('Challenge reset to original');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

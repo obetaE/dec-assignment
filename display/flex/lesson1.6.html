@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 1.6 - Flex Wrap & Gap: Multi-line Layouts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .review-code {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* The Problem & Solution */
+        .problem-solution {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .ps-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .ps-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .ps-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .ps-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ps-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .ps-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .ps-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+        }
+
+        .nowrap-visual {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .wrap-visual {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100%;
+            gap: 10px;
+            align-content: flex-start;
+        }
+
+        .ps-item {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Flex-wrap values */
+        .wrap-values {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .values-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .values-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .value-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .value-demo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .value-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .value-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        /* Gap properties */
+        .gap-properties {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .gap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .gap-header h3 {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .gap-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .gap-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .gap-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .gap-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .gap-visual {
+            height: 150px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-box {
+            width: 400px;
+            height: 250px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            display: flex;
+        }
+
+        .demo-item {
+            background: var(--secondary);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        select:focus, input:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Real world examples */
+        .real-world {
+            background: rgba(217, 119, 6, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--warning);
+        }
+
+        .real-world-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .real-world-header h3 {
+            color: var(--warning);
+            margin: 0;
+        }
+
+        .example-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .showcase-item {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .showcase-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .showcase-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .showcase-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .card-grid-visual {
+            display: flex;
+            flex-wrap: wrap;
+            height: 100%;
+            width: 100%;
+            gap: 15px;
+            align-content: flex-start;
+        }
+
+        .card {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 150px;
+        }
+
+        .image-gallery-visual {
+            display: flex;
+            flex-wrap: wrap;
+            height: 100%;
+            width: 100%;
+            gap: 10px;
+            align-content: flex-start;
+        }
+
+        .image {
+            background: var(--success);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 80px;
+        }
+
+        .tag-cloud-visual {
+            display: flex;
+            flex-wrap: wrap;
+            height: 100%;
+            width: 100%;
+            gap: 8px;
+            align-content: flex-start;
+        }
+
+        .tag {
+            background: var(--warning);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .showcase-item-code {
+            font-family: 'Courier New', monospace;
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 280px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-box {
+            width: 400px;
+            height: 250px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            display: flex;
+        }
+
+        .challenge-item {
+            background: var(--warning);
+            color: white;
+            padding: 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .values-grid, .gap-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .example-showcase {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-box, #challenge-box {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Code highlighting */
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        .code-selector {
+            color: #fbbf24;
+        }
+
+        /* Special highlight */
+        .highlight {
+            background: rgba(255, 242, 200, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .highlight strong {
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step completed">
+            <div class="step-number">1.1</div>
+            <div class="step-label">Display & Flex Intro</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.2</div>
+            <div class="step-label">Flex Direction</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.3</div>
+            <div class="step-label">Justify Content</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.4</div>
+            <div class="step-label">Align Items</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.5</div>
+            <div class="step-label">Flex Items</div>
+        </div>
+        <div class="progress-step current">
+            <div class="step-number">1.6</div>
+            <div class="step-label">Flex Wrap & Gap</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>Flex Wrap & Gap: Multi-line Layouts</h1>
+        <p class="lesson-goal">Master responsive multi-line layouts with wrapping and perfect spacing</p>
+        <div class="module-tag">
+            <i class="fas fa-layer-group"></i> Module 1: Flexbox Fundamentals • Lesson 6 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> Quick Review: Single-Line Limitations</h3>
+        <p>In Lessons 1.1-1.5, we worked with single-line flex containers. But what happens when items don't fit?</p>
+        
+        <div class="review-grid">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--primary);">
+                    <i class="fas fa-compress-alt"></i>
+                </div>
+                <h4>Default: nowrap</h4>
+                <p>Items stay on one line, even if they overflow</p>
+                <div class="review-code">flex-wrap: nowrap;</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-arrows-alt-h"></i>
+                </div>
+                <h4>Item Flexibility</h4>
+                <p>flex-grow/shrink helps items adjust</p>
+                <div class="review-code">flex: 1;</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h4>The Problem</h4>
+                <p>When items can't shrink enough, they overflow the container</p>
+                <div class="review-code">Overflow → broken layout</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--secondary);">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h4>Today's Solution</h4>
+                <p>Make items wrap to multiple lines and add proper spacing!</p>
+                <div class="review-code">flex-wrap + gap</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-recycle"></i> Introducing Multi-line Flexbox</h2>
+        
+        <div class="explanation">
+            <p><strong>flex-wrap</strong> and <strong>gap</strong> are CSS properties that transform single-line flex containers into responsive, multi-line layouts. While basic flexbox handles one row or column, these properties allow items to flow naturally across multiple lines like text wrapping.</p>
+        </div>
+
+        <div class="analogy">
+            <strong>📚 Bookshelf Analogy</strong>
+            <p>Imagine arranging books on a shelf:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>nowrap (default):</strong> Try to fit all books on one shelf, even if they hang off the edges</li>
+                <li><strong>wrap:</strong> Books that don't fit move to the next shelf automatically</li>
+                <li><strong>wrap-reverse:</strong> Books fill from bottom shelf up instead of top down</li>
+                <li><strong>gap:</strong> Consistent spacing between books, making them easier to browse</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <p><strong>💡 The Responsive Breakthrough:</strong> Before <code>gap</code>, developers used margins to space flex items, which created awkward edge cases. The <code>gap</code> property gives us perfect, consistent spacing that only appears <em>between</em> items, not on the edges. Combined with <code>flex-wrap</code>, this creates truly responsive layouts!</p>
+        </div>
+    </div>
+
+    <!-- The Problem & Solution -->
+    <div class="problem-solution">
+        <div class="ps-header">
+            <h3><i class="fas fa-lightbulb"></i> The Problem & Solution</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-exchange-alt"></i> Before & After
+            </div>
+        </div>
+
+        <p>See how <code>flex-wrap</code> transforms problematic layouts:</p>
+
+        <div class="ps-container">
+            <div class="ps-box">
+                <div class="ps-title" style="color: var(--danger);">
+                    <i class="fas fa-times-circle"></i> Without flex-wrap
+                </div>
+                <p>Items overflow, creating horizontal scrollbars or squeezed content</p>
+                <div class="ps-visual">
+                    <div class="nowrap-visual">
+                        <div class="ps-item" style="background: var(--danger);">Item 1</div>
+                        <div class="ps-item" style="background: var(--danger);">Item 2</div>
+                        <div class="ps-item" style="background: var(--danger);">Item 3</div>
+                        <div class="ps-item" style="background: var(--danger);">Item 4</div>
+                        <div class="ps-item" style="background: var(--danger);">Item 5</div>
+                        <div class="ps-item" style="background: var(--danger);">Item 6</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {<br>
+&nbsp;&nbsp;display: flex;<br>
+<span class="code-comment">&nbsp;&nbsp;/* Default: nowrap (causes overflow) */</span><br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> Problem: Items overflow container on small screens</p>
+            </div>
+
+            <div class="ps-box">
+                <div class="ps-title" style="color: var(--success);">
+                    <i class="fas fa-check-circle"></i> With flex-wrap
+                </div>
+                <p>Items wrap to new lines, creating responsive multi-line layouts</p>
+                <div class="ps-visual">
+                    <div class="wrap-visual">
+                        <div class="ps-item" style="background: var(--success);">Item 1</div>
+                        <div class="ps-item" style="background: var(--success);">Item 2</div>
+                        <div class="ps-item" style="background: var(--success);">Item 3</div>
+                        <div class="ps-item" style="background: var(--success);">Item 4</div>
+                        <div class="ps-item" style="background: var(--success);">Item 5</div>
+                        <div class="ps-item" style="background: var(--success);">Item 6</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-wrap: wrap;<br>
+&nbsp;&nbsp;gap: 10px;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-check-circle"></i> Solution: Items wrap naturally, perfect for responsive design</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-mobile-alt"></i>
+                <strong>Responsive by Default:</strong> With <code>flex-wrap: wrap</code>, your layout automatically adapts to different screen sizes without media queries! Items flow to new lines when they run out of space.
+            </p>
+        </div>
+    </div>
+
+    <!-- Flex-wrap values -->
+    <div class="wrap-values">
+        <div class="values-header">
+            <h3><i class="fas fa-retweet"></i> The Three flex-wrap Values</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-sliders-h"></i> 3 Wrapping Options
+            </div>
+        </div>
+        
+        <p>Here are all three values for <code>flex-wrap</code> with visual examples:</p>
+
+        <div class="values-grid">
+            <div class="value-demo">
+                <div class="value-title">nowrap (default)</div>
+                <p>All items stay on one line</p>
+                <div class="value-visual">
+                    <div style="display: flex; flex-wrap: nowrap; width: 100%; height: 100%; overflow: hidden;">
+                        <div class="ps-item">1</div>
+                        <div class="ps-item">2</div>
+                        <div class="ps-item">3</div>
+                        <div class="ps-item">4</div>
+                        <div class="ps-item">5</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;flex-wrap: nowrap;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-info-circle"></i> Use when you want single-line layouts</p>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">wrap</div>
+                <p>Items wrap to new lines when needed</p>
+                <div class="value-visual">
+                    <div style="display: flex; flex-wrap: wrap; width: 100%; height: 100%; gap: 8px; align-content: flex-start;">
+                        <div class="ps-item" style="background: var(--success);">1</div>
+                        <div class="ps-item" style="background: var(--success);">2</div>
+                        <div class="ps-item" style="background: var(--success);">3</div>
+                        <div class="ps-item" style="background: var(--success);">4</div>
+                        <div class="ps-item" style="background: var(--success);">5</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;flex-wrap: wrap;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-check-circle"></i> Most common for responsive layouts</p>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">wrap-reverse</div>
+                <p>Items wrap to new lines in reverse order</p>
+                <div class="value-visual">
+                    <div style="display: flex; flex-wrap: wrap-reverse; width: 100%; height: 100%; gap: 8px; align-content: flex-start;">
+                        <div class="ps-item" style="background: var(--warning);">1</div>
+                        <div class="ps-item" style="background: var(--warning);">2</div>
+                        <div class="ps-item" style="background: var(--warning);">3</div>
+                        <div class="ps-item" style="background: var(--warning);">4</div>
+                        <div class="ps-item" style="background: var(--warning);">5</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;flex-wrap: wrap-reverse;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-info-circle"></i> Useful for bottom-up layouts like chat</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gap properties -->
+    <div class="gap-properties">
+        <div class="gap-header">
+            <h3><i class="fas fa-spacing"></i> Perfect Spacing with gap</h3>
+            <div style="color: var(--secondary); font-weight: 600;">
+                <i class="fas fa-ruler-combined"></i> 3 Spacing Options
+            </div>
+        </div>
+        
+        <p>The <code>gap</code> property family gives you perfect spacing control:</p>
+
+        <div class="gap-container">
+            <div class="gap-demo">
+                <div class="gap-title">gap (shorthand)</div>
+                <p>Sets both row and column gaps</p>
+                <div class="gap-visual">
+                    <div style="display: flex; flex-wrap: wrap; width: 100%; height: 100%; gap: 15px; align-content: flex-start;">
+                        <div class="ps-item">A</div>
+                        <div class="ps-item">B</div>
+                        <div class="ps-item">C</div>
+                        <div class="ps-item">D</div>
+                        <div class="ps-item">E</div>
+                        <div class="ps-item">F</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;gap: 20px;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-star"></i> Most commonly used</p>
+            </div>
+            
+            <div class="gap-demo">
+                <div class="gap-title">row-gap & column-gap</div>
+                <p>Control vertical and horizontal spacing separately</p>
+                <div class="gap-visual">
+                    <div style="display: flex; flex-wrap: wrap; width: 100%; height: 100%; row-gap: 10px; column-gap: 25px; align-content: flex-start;">
+                        <div class="ps-item">A</div>
+                        <div class="ps-item">B</div>
+                        <div class="ps-item">C</div>
+                        <div class="ps-item">D</div>
+                        <div class="ps-item">E</div>
+                        <div class="ps-item">F</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;row-gap: 15px;<br>
+&nbsp;&nbsp;column-gap: 30px;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-star"></i> Different row/column spacing</p>
+            </div>
+            
+            <div class="gap-demo">
+                <div class="gap-title">No gap vs With gap</div>
+                <p>Compare traditional margins vs modern gap</p>
+                <div class="gap-visual">
+                    <div style="display: flex; flex-wrap: wrap; width: 100%; height: 100%; align-content: flex-start;">
+                        <div class="ps-item" style="margin: 5px;">Old</div>
+                        <div class="ps-item" style="margin: 5px;">Way</div>
+                        <div class="ps-item" style="margin: 5px;">With</div>
+                        <div class="ps-item" style="margin: 5px;">Margins</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+<span class="code-comment">/* Old way (problematic) */</span><br>
+.item { margin: 10px; }<br><br>
+<span class="code-comment">/* New way (perfect) */</span><br>
+.container { gap: 20px; }
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-bolt"></i> Gap only adds space between items, not on edges!</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--secondary);">
+                <i class="fas fa-magic"></i>
+                <strong>The Gap Advantage:</strong> Unlike margins, <code>gap</code> only creates space <em>between</em> items, never on the outer edges. This eliminates the need for negative margins or special selectors like <code>:first-child</code> and <code>:last-child</code>!
+            </p>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> Interactive Wrap & Gap Playground</h3>
+            <div style="color: var(--primary); font-weight: 600;">
+                <i class="fas fa-gamepad"></i> Experiment Live
+            </div>
+        </div>
+
+        <p>Control wrapping behavior and spacing. Resize the container to see responsive wrapping!</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="wrap-select">
+                        <i class="fas fa-retweet"></i> Choose flex-wrap
+                    </label>
+                    <select id="wrap-select">
+                        <option value="nowrap">nowrap (single line)</option>
+                        <option value="wrap" selected>wrap (multi-line)</option>
+                        <option value="wrap-reverse">wrap-reverse (reverse multi-line)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="gap-slider">
+                        <i class="fas fa-spacing"></i> gap value: 
+                        <span id="gap-value" class="value-display">10px</span>
+                    </label>
+                    <input type="range" id="gap-slider" min="0" max="30" step="5" value="10">
+                </div>
+
+                <div class="control-group">
+                    <label for="item-count-slider">
+                        <i class="fas fa-cubes"></i> Number of Items: 
+                        <span id="item-count-value" class="value-display">8</span>
+                    </label>
+                    <input type="range" id="item-count-slider" min="4" max="16" step="1" value="8">
+                </div>
+
+                <div class="control-group">
+                    <label for="container-size-slider">
+                        <i class="fas fa-expand-alt"></i> Container Width: 
+                        <span id="container-size-value" class="value-display">400px</span>
+                    </label>
+                    <input type="range" id="container-size-slider" min="250" max="500" step="50" value="400">
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-code"></i> Current CSS
+                    </label>
+                    <div id="current-css" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.container {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-wrap: wrap;<br>
+&nbsp;&nbsp;gap: 10px;<br>
+}
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="applySettings()">
+                        <i class="fas fa-play"></i> Apply Settings
+                    </button>
+                    <button onclick="resetDemo()" style="background: var(--danger);">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Try This:</strong> Set flex-wrap to "wrap", add some gap, then reduce the container width. Watch items automatically flow to new lines!
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-box" id="demo-container">
+                    <div class="demo-item">Item 1</div>
+                    <div class="demo-item">Item 2</div>
+                    <div class="demo-item">Item 3</div>
+                    <div class="demo-item">Item 4</div>
+                    <div class="demo-item">Item 5</div>
+                    <div class="demo-item">Item 6</div>
+                    <div class="demo-item">Item 7</div>
+                    <div class="demo-item">Item 8</div>
+                </div>
+                <div style="width: 100%; text-align: center;">
+                    <div style="display: inline-block; padding: 8px 20px; background: var(--primary); color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                        <i class="fas fa-arrows-alt-h"></i> Drag container width slider to test responsiveness
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Items automatically wrap based on container width and gap
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real world examples -->
+    <div class="real-world">
+        <div class="real-world-header">
+            <h3><i class="fas fa-globe"></i> Real-World Applications</h3>
+            <div style="color: var(--warning); font-weight: 600;">
+                <i class="fas fa-rocket"></i> Practical Layouts
+            </div>
+        </div>
+
+        <p>Here's how flex-wrap and gap create common web layouts:</p>
+
+        <div class="example-showcase">
+            <div class="showcase-item">
+                <div class="showcase-title">Responsive Card Grid</div>
+                <p>Cards that automatically rearrange based on screen size</p>
+                <div class="showcase-visual">
+                    <div class="card-grid-visual">
+                        <div class="card">Card 1</div>
+                        <div class="card">Card 2</div>
+                        <div class="card">Card 3</div>
+                        <div class="card">Card 4</div>
+                        <div class="card">Card 5</div>
+                        <div class="card">Card 6</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.card-grid {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-wrap: wrap;<br>
+&nbsp;&nbsp;gap: 20px;<br>
+}<br><br>
+.card {<br>
+&nbsp;&nbsp;flex: 1 1 300px; <span class="code-comment">/* Min width 300px */</span><br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Image Gallery</div>
+                <p>Photos that create a masonry-like layout</p>
+                <div class="showcase-visual">
+                    <div class="image-gallery-visual">
+                        <div class="image">📷</div>
+                        <div class="image">📷</div>
+                        <div class="image">📷</div>
+                        <div class="image">📷</div>
+                        <div class="image">📷</div>
+                        <div class="image">📷</div>
+                        <div class="image">📷</div>
+                        <div class="image">📷</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.gallery {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-wrap: wrap;<br>
+&nbsp;&nbsp;gap: 10px;<br>
+}<br><br>
+.photo {<br>
+&nbsp;&nbsp;flex: 1 1 150px;<br>
+&nbsp;&nbsp;height: 150px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Tag Cloud</div>
+                <p>Tags that wrap naturally like inline text</p>
+                <div class="showcase-visual">
+                    <div class="tag-cloud-visual">
+                        <div class="tag">HTML</div>
+                        <div class="tag">CSS</div>
+                        <div class="tag">JavaScript</div>
+                        <div class="tag">React</div>
+                        <div class="tag">Vue.js</div>
+                        <div class="tag">Node.js</div>
+                        <div class="tag">Python</div>
+                        <div class="tag">Django</div>
+                        <div class="tag">API</div>
+                        <div class="tag">Responsive</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.tag-cloud {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-wrap: wrap;<br>
+&nbsp;&nbsp;gap: 8px;<br>
+}<br><br>
+.tag {<br>
+&nbsp;&nbsp;padding: 5px 12px;<br>
+&nbsp;&nbsp;background: #e2e8f0;<br>
+&nbsp;&nbsp;border-radius: 15px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Navigation with Dropdown</div>
+                <p>Menu that wraps on mobile, stays inline on desktop</p>
+                <div class="showcase-visual">
+                    <div style="display: flex; flex-wrap: wrap; height: 100%; width: 100%; gap: 15px; align-items: center;">
+                        <div class="ps-item" style="background: var(--primary);">Home</div>
+                        <div class="ps-item" style="background: var(--primary);">About</div>
+                        <div class="ps-item" style="background: var(--primary);">Services</div>
+                        <div class="ps-item" style="background: var(--primary);">Portfolio</div>
+                        <div class="ps-item" style="background: var(--primary);">Contact</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.nav {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-wrap: wrap;<br>
+&nbsp;&nbsp;gap: 20px;<br>
+}<br><br>
+@media (max-width: 768px) {<br>
+&nbsp;&nbsp;.nav {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gap: 10px;<br>
+&nbsp;&nbsp;}<br>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge: Responsive Photo Gallery</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Create a responsive photo gallery that works on any screen size.</p>
+                <ol>
+                    <li>Start with a container holding multiple photo items</li>
+                    <li>Make photos wrap to new lines when they run out of space</li>
+                    <li>Add consistent spacing between photos (both horizontally and vertically)</li>
+                    <li>Make each photo flexible with a minimum width of 150px</li>
+                    <li>Test by adjusting the container width in the demo above</li>
+                    <li>Extra credit: Make photos maintain a square aspect ratio</li>
+                </ol>
+                <p><strong>Hint:</strong> You'll need <code>flex-wrap: wrap</code>, <code>gap</code>, and <code>flex: 1 1 150px</code> on the items!</p>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-box">
+                    <div class="challenge-item">📸 Photo 1</div>
+                    <div class="challenge-item">📸 Photo 2</div>
+                    <div class="challenge-item">📸 Photo 3</div>
+                    <div class="challenge-item">📸 Photo 4</div>
+                    <div class="challenge-item">📸 Photo 5</div>
+                    <div class="challenge-item">📸 Photo 6</div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="testGallery('wrap')">
+                    <i class="fas fa-wrench"></i> Enable Wrapping
+                </button>
+                
+                <button class="challenge-btn" onclick="testGallery('gap')">
+                    <i class="fas fa-wrench"></i> Add Spacing
+                </button>
+                
+                <button class="challenge-btn" onclick="testGallery('flex')">
+                    <i class="fas fa-wrench"></i> Make Flexible
+                </button>
+                
+                <button class="challenge-btn" onclick="testGallery('all')">
+                    <i class="fas fa-wrench"></i> Apply All
+                </button>
+                
+                <button class="challenge-btn" onclick="showChallengeSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="challenge-solution" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* Complete responsive gallery solution */
+.gallery {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 15px; /* Consistent spacing */
+}
+
+.photo {
+  flex: 1 1 150px; /* Grow, shrink, min-width 150px */
+  aspect-ratio: 1 / 1; /* Square photos (optional) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3b82f6;
+  color: white;
+  border-radius: 8px;
+}
+
+/* Optional: Different spacing on mobile */
+@media (max-width: 768px) {
+  .gallery {
+    gap: 10px;
+  }
+  
+  .photo {
+    flex: 1 1 120px; /* Smaller min-width on mobile */
+  }
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🔄
+                </div>
+                <div class="takeaway-content">
+                    <h4>flex-wrap</h4>
+                    <p><code>nowrap</code> (default), <code>wrap</code>, <code>wrap-reverse</code>. Controls multi-line behavior.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📏
+                </div>
+                <div class="takeaway-content">
+                    <h4>gap Property</h4>
+                    <p>Perfect spacing between items. No edge spacing issues like margins.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📱
+                </div>
+                <div class="takeaway-content">
+                    <h4>Responsive by Default</h4>
+                    <p><code>flex-wrap: wrap</code> creates responsive layouts without media queries.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🎯
+                </div>
+                <div class="takeaway-content">
+                    <h4>Common Pattern</h4>
+                    <p><code>display: flex; flex-wrap: wrap; gap: 20px;</code> = perfect responsive grid.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="./lesson1.5.html" class="nav-btn prev-btn">
+            <i class="fas fa-arrow-left"></i> Previous: Flex Items
+        </a>
+        <a href="../grid/lesson2.1.html" class="nav-btn next-btn">
+            Next: Module 2 Overview
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 1, Lesson 6 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: flex-wrap, gap, row-gap, column-gap, responsive multi-line layouts
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> Congratulations! You've completed Module 1: Flexbox Fundamentals!
+        </p>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: var(--secondary);">
+            <i class="fas fa-trophy"></i> Next: Module 2 - CSS Grid Fundamentals
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const wrapSelect = document.getElementById('wrap-select');
+        const gapSlider = document.getElementById('gap-slider');
+        const gapValue = document.getElementById('gap-value');
+        const itemCountSlider = document.getElementById('item-count-slider');
+        const itemCountValue = document.getElementById('item-count-value');
+        const containerSizeSlider = document.getElementById('container-size-slider');
+        const containerSizeValue = document.getElementById('container-size-value');
+        const demoContainer = document.getElementById('demo-container');
+        const currentCss = document.getElementById('current-css');
+        const challengeBox = document.getElementById('challenge-box');
+        const challengeSolution = document.getElementById('challenge-solution');
+        const feedback = document.getElementById('feedback');
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            wrapSelect.addEventListener('change', updateCSSDisplay);
+            gapSlider.addEventListener('input', updateGapValue);
+            itemCountSlider.addEventListener('input', updateItemCount);
+            containerSizeSlider.addEventListener('input', updateContainerSize);
+            
+            // Set initial state
+            updateGapValue();
+            updateItemCount();
+            updateContainerSize();
+            updateCSSDisplay();
+        }
+
+        // Update gap value display
+        function updateGapValue() {
+            const gap = parseInt(gapSlider.value);
+            gapValue.textContent = `${gap}px`;
+            updateCSSDisplay();
+        }
+
+        // Update item count
+        function updateItemCount() {
+            const count = parseInt(itemCountSlider.value);
+            itemCountValue.textContent = count;
+            
+            // Clear current items
+            demoContainer.innerHTML = '';
+            
+            // Add new items
+            for (let i = 1; i <= count; i++) {
+                const item = document.createElement('div');
+                item.className = 'demo-item';
+                item.textContent = `Item ${i}`;
+                demoContainer.appendChild(item);
+            }
+            
+            updateCSSDisplay();
+        }
+
+        // Update container size
+        function updateContainerSize() {
+            const size = parseInt(containerSizeSlider.value);
+            containerSizeValue.textContent = `${size}px`;
+            demoContainer.style.width = `${size}px`;
+        }
+
+        // Update CSS display
+        function updateCSSDisplay() {
+            const wrapValue = wrapSelect.value;
+            const gap = parseInt(gapSlider.value);
+            
+            // Update CSS display
+            currentCss.textContent = `.container {\n  display: flex;\n  flex-wrap: ${wrapValue};\n  gap: ${gap}px;\n}`;
+        }
+
+        // Apply settings to demo
+        function applySettings() {
+            const wrapValue = wrapSelect.value;
+            const gap = parseInt(gapSlider.value);
+            
+            // Apply to demo container
+            demoContainer.style.flexWrap = wrapValue;
+            demoContainer.style.gap = `${gap}px`;
+            demoContainer.style.justifyContent = 'flex-start';
+            demoContainer.style.alignItems = 'flex-start';
+            demoContainer.style.alignContent = 'flex-start';
+            
+            showFeedback(`Applied flex-wrap: ${wrapValue} with gap: ${gap}px`);
+        }
+
+        // Reset demo
+        function resetDemo() {
+            wrapSelect.value = 'wrap';
+            gapSlider.value = '10';
+            itemCountSlider.value = '8';
+            containerSizeSlider.value = '400';
+            
+            updateGapValue();
+            updateItemCount();
+            updateContainerSize();
+            applySettings();
+            showFeedback('Reset to default settings');
+        }
+
+        // Test gallery layout
+        function testGallery(feature) {
+            if (feature === 'wrap' || feature === 'all') {
+                challengeBox.style.flexWrap = 'wrap';
+            }
+            
+            if (feature === 'gap' || feature === 'all') {
+                challengeBox.style.gap = '15px';
+            }
+            
+            if (feature === 'flex' || feature === 'all') {
+                const items = challengeBox.querySelectorAll('.challenge-item');
+                items.forEach(item => {
+                    item.style.flex = '1 1 150px';
+                    item.style.aspectRatio = '1 / 1';
+                });
+            }
+            
+            if (feature === 'wrap') {
+                showFeedback('Wrapping enabled - items will flow to new lines');
+            } else if (feature === 'gap') {
+                showFeedback('Spacing added - consistent gap between items');
+            } else if (feature === 'flex') {
+                showFeedback('Flexibility added - items can grow/shrink with min-width');
+            } else if (feature === 'all') {
+                showFeedback('Perfect! Responsive gallery complete');
+            }
+        }
+
+        // Show challenge solution
+        function showChallengeSolution() {
+            // Show the solution
+            challengeSolution.style.display = 'block';
+            
+            // Apply the solution
+            testGallery('all');
+            
+            // Add some extra styling
+            challengeBox.style.padding = '20px';
+            
+            showFeedback('Applied complete responsive gallery solution');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            // Reset to original
+            challengeBox.style.flexWrap = '';
+            challengeBox.style.gap = '';
+            challengeBox.style.padding = '15px';
+            
+            const items = challengeBox.querySelectorAll('.challenge-item');
+            items.forEach(item => {
+                item.style.flex = '';
+                item.style.aspectRatio = '';
+            });
+            
+            challengeSolution.style.display = 'none';
+            showFeedback('Challenge reset to original');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

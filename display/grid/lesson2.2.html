@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 2.2 - The FR Unit and Flexible Grids</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* The Problem with Fixed Units */
+        .problem-section {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .problem-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .problem-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .problem-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .problem-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .problem-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .problem-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .fixed-grid-visual {
+            display: grid;
+            grid-template-columns: 200px 200px 200px;
+            gap: 10px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .fr-grid-visual {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            height: 100%;
+        }
+
+        .problem-item {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* FR Unit Explanation */
+        .fr-explanation {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .fr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .fr-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .fr-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        .fr-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .fr-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        .code-selector {
+            color: #fbbf24;
+        }
+
+        /* FR Examples */
+        .fr-examples {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .examples-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .examples-header h3 {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .example-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .example-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .example-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: grid;
+        }
+
+        .example-item {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-grid {
+            width: 400px;
+            height: 300px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            display: grid;
+        }
+
+        .demo-grid-item {
+            background: var(--secondary);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        select:focus, input:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 280px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-grid {
+            width: 400px;
+            height: 250px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+        }
+
+        .challenge-grid-item {
+            background: var(--warning);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-grid {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Highlight */
+        .highlight {
+            background: rgba(255, 242, 200, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .highlight strong {
+            color: var(--warning);
+        }
+        
+        .unit-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .unit-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+        
+        .unit-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .fr-special {
+            background: rgba(5, 150, 105, 0.1);
+            border-color: var(--success);
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step completed">
+            <div class="step-number">2.1</div>
+            <div class="step-label">Grid Intro</div>
+        </div>
+        <div class="progress-step current">
+            <div class="step-number">2.2</div>
+            <div class="step-label">FR Unit</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.3</div>
+            <div class="step-label">Gaps & Alignment</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.4</div>
+            <div class="step-label">Placing Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.5</div>
+            <div class="step-label">Named Areas</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.6</div>
+            <div class="step-label">Auto-fit & Minmax</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>The FR Unit and Flexible Grids</h1>
+        <p class="lesson-goal">Master responsive grid layouts with the fractional (fr) unit</p>
+        <div class="module-tag">
+            <i class="fas fa-th"></i> Module 2: CSS Grid Fundamentals • Lesson 2 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> Quick Review: Fixed Grid Limitations</h3>
+        <p>In Lesson 2.1, we created grids with fixed pixel measurements. But what happens when the container size changes?</p>
+        
+        <div class="review-content">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--primary);">
+                    <i class="fas fa-ruler"></i>
+                </div>
+                <h4>Fixed Units (px)</h4>
+                <p>Grids with fixed pixel sizes don't adapt to container changes</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+grid-template-columns: 
+  200px 200px 200px;
+                </div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h4>The Problem</h4>
+                <p>On smaller screens, fixed grids cause overflow or empty space</p>
+                <div style="margin: 10px 0; padding: 10px; background: #fee2e2; border-radius: 5px; color: var(--danger);">
+                    <i class="fas fa-times-circle"></i> Not responsive
+                </div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--secondary);">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <h4>Percentage Solution</h4>
+                <p>Better, but calculations can be tricky with gaps</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+grid-template-columns: 
+  33% 33% 33%;
+                </div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h4>Today's Solution</h4>
+                <p>The <code>fr</code> (fractional) unit solves all these problems!</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+grid-template-columns: 
+  1fr 1fr 1fr;
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-puzzle-piece"></i> Introducing the Fractional Unit</h2>
+        
+        <div class="explanation">
+            <p>The <strong>fr unit</strong> (fractional unit) is CSS Grid's secret weapon for creating flexible, responsive layouts. It represents a fraction of the available space in the grid container.</p>
+            
+            <p>Unlike pixels (fixed) or percentages (relative to parent), <code>fr</code> units distribute <em>only the free space</em> after accounting for fixed-sized tracks and gaps. This makes them perfect for responsive design!</p>
+        </div>
+
+        <div class="analogy">
+            <strong>🍕 Pizza Analogy</strong>
+            <p>Imagine you have a pizza (the grid container) to share with friends:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Pixels (px):</strong> Each friend gets exactly 2 inches of pizza, regardless of pizza size</li>
+                <li><strong>Percentages (%):</strong> Each friend gets 25% of the pizza, but if you cut off the crust first, the math gets complicated</li>
+                <li><strong>fr units:</strong> You divide the <em>entire pizza</em> equally among friends. Add more friends? Each slice automatically gets smaller!</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <p><strong>💡 The fr Unit Magic:</strong> The browser calculates <code>fr</code> values <em>after</em> allocating space for fixed-size items and gaps. This means you can mix fixed and flexible tracks in the same grid, and everything just works!</p>
+        </div>
+    </div>
+
+    <!-- Unit Comparison -->
+    <div class="fr-explanation">
+        <div class="fr-header">
+            <h3><i class="fas fa-balance-scale"></i> CSS Units Comparison</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-ruler-combined"></i> Which Unit When?
+            </div>
+        </div>
+        
+        <p>Different units serve different purposes in CSS Grid. Here's when to use each:</p>
+
+        <div class="unit-comparison">
+            <div class="unit-card">
+                <h4>px (Pixels)</h4>
+                <p><strong>Fixed size</strong> - doesn't change</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+200px 200px
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i> Perfect for fixed elements like logos, icons
+                </p>
+            </div>
+            
+            <div class="unit-card">
+                <h4>% (Percentages)</h4>
+                <p><strong>Relative to parent</strong> - includes gaps in calculation</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+33% 33% 33%
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Tricky with gaps: 33% + 33% + 33% + gaps > 100%
+                </p>
+            </div>
+            
+            <div class="unit-card fr-special">
+                <h4>fr (Fractional)</h4>
+                <p><strong>Fraction of free space</strong> - ignores gaps in calculation</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+1fr 1fr 1fr
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;">
+                    <i class="fas fa-star" style="color: var(--success);"></i> Perfect for responsive layouts - automatically adjusts
+                </p>
+            </div>
+            
+            <div class="unit-card">
+                <h4>auto</h4>
+                <p><strong>Content-based</strong> - sizes to fit content</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+auto 1fr auto
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem;">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i> Great for sidebar + main content layouts
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--success);">
+                <i class="fas fa-lightbulb"></i>
+                <strong>The fr Advantage:</strong> With <code>fr</code> units, the browser handles all the complex math. You just define the proportions, and the grid automatically fills the available space perfectly!
+            </p>
+        </div>
+    </div>
+
+    <!-- The Problem with Fixed Units -->
+    <div class="problem-section">
+        <div class="problem-header">
+            <h3><i class="fas fa-exclamation-circle"></i> The Problem with Fixed Grids</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-mobile-alt"></i> Responsive Issues
+            </div>
+        </div>
+
+        <p>Fixed-width grids work at one specific size but fail on different screen sizes:</p>
+
+        <div class="problem-container">
+            <div class="problem-box">
+                <div class="problem-title" style="color: var(--danger);">
+                    <i class="fas fa-times-circle"></i> Fixed Pixels (Problem)
+                </div>
+                <p>600px container with 3×200px columns</p>
+                <div class="problem-visual">
+                    <div class="fixed-grid-visual">
+                        <div class="problem-item" style="background: var(--danger);">Col 1</div>
+                        <div class="problem-item" style="background: var(--danger);">Col 2</div>
+                        <div class="problem-item" style="background: var(--danger);">Col 3</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {
+  width: 600px;
+  grid-template-columns: 
+    200px 200px 200px;
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-exclamation-triangle"></i> Problem: On smaller screens, columns overflow the container
+                </p>
+            </div>
+
+            <div class="problem-box">
+                <div class="problem-title" style="color: var(--success);">
+                    <i class="fas fa-check-circle"></i> FR Units (Solution)
+                </div>
+                <p>Same container with 3×1fr columns</p>
+                <div class="problem-visual">
+                    <div class="fr-grid-visual">
+                        <div class="problem-item" style="background: var(--success);">Col 1</div>
+                        <div class="problem-item" style="background: var(--success);">Col 2</div>
+                        <div class="problem-item" style="background: var(--success);">Col 3</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {
+  width: 600px;
+  grid-template-columns: 
+    1fr 1fr 1fr;
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-check-circle"></i> Solution: Columns always fill available space proportionally
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-magic"></i>
+                <strong>Automatic Responsiveness:</strong> With <code>fr</code> units, if the container gets smaller, the columns shrink proportionally. No media queries needed!
+            </p>
+        </div>
+    </div>
+
+    <!-- FR Examples -->
+    <div class="fr-examples">
+        <div class="examples-header">
+            <h3><i class="fas fa-cogs"></i> FR Unit Patterns in Action</h3>
+            <div style="color: var(--secondary); font-weight: 600;">
+                <i class="fas fa-shapes"></i> Common Layouts
+            </div>
+        </div>
+        
+        <p>Different <code>fr</code> ratios create different layout patterns:</p>
+
+        <div class="examples-grid">
+            <div class="example-demo">
+                <div class="example-title">Equal Columns (1:1:1)</div>
+                <p>Three equal columns that fill available space</p>
+                <div class="example-visual" style="grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div class="example-item">Sidebar</div>
+                    <div class="example-item">Main</div>
+                    <div class="example-item">Sidebar</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-columns: 
+  1fr 1fr 1fr;
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-equals"></i> All columns get equal space
+                </p>
+            </div>
+            
+            <div class="example-demo">
+                <div class="example-title">Main Content Focus (1:3:1)</div>
+                <p>Center column gets 3× more space than sidebars</p>
+                <div class="example-visual" style="grid-template-columns: 1fr 3fr 1fr; gap: 10px;">
+                    <div class="example-item">Left</div>
+                    <div class="example-item" style="background: var(--success);">Main Content</div>
+                    <div class="example-item">Right</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-columns: 
+  1fr 3fr 1fr;
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-columns"></i> Main content gets 3/5 of space
+                </p>
+            </div>
+            
+            <div class="example-demo">
+                <div class="example-title">Mixed Units (250px 1fr)</div>
+                <p>Fixed sidebar + flexible main content</p>
+                <div class="example-visual" style="grid-template-columns: 100px 1fr; gap: 10px;">
+                    <div class="example-item" style="background: var(--warning);">Nav</div>
+                    <div class="example-item">Content</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-columns: 
+  250px 1fr;
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-adjust"></i> Sidebar fixed, content fills remaining space
+                </p>
+            </div>
+            
+            <div class="example-demo">
+                <div class="example-title">Complex Ratio (2:1:1)</div>
+                <p>First column gets double the space of others</p>
+                <div class="example-visual" style="grid-template-columns: 2fr 1fr 1fr; gap: 10px;">
+                    <div class="example-item" style="background: var(--info);">Featured</div>
+                    <div class="example-item">Regular</div>
+                    <div class="example-item">Regular</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-columns: 
+  2fr 1fr 1fr;
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-chart-pie"></i> Featured gets ½ total space (2/4)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> FR Unit Playground</h3>
+            <div style="color: var(--primary); font-weight: 600;">
+                <i class="fas fa-gamepad"></i> Experiment with Fractions
+            </div>
+        </div>
+
+        <p>Adjust the fr values to see how they affect the grid proportions. Try different combinations!</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="col1-fr">
+                        <i class="fas fa-columns"></i> Column 1: 
+                        <span id="col1-value" class="value-display">1fr</span>
+                    </label>
+                    <input type="range" id="col1-fr" min="1" max="4" step="1" value="1">
+                </div>
+
+                <div class="control-group">
+                    <label for="col2-fr">
+                        <i class="fas fa-columns"></i> Column 2: 
+                        <span id="col2-value" class="value-display">2fr</span>
+                    </label>
+                    <input type="range" id="col2-fr" min="1" max="4" step="1" value="2">
+                </div>
+
+                <div class="control-group">
+                    <label for="col3-fr">
+                        <i class="fas fa-columns"></i> Column 3: 
+                        <span id="col3-value" class="value-display">1fr</span>
+                    </label>
+                    <input type="range" id="col3-fr" min="1" max="4" step="1" value="1">
+                </div>
+
+                <div class="control-group">
+                    <label for="container-width">
+                        <i class="fas fa-expand-alt"></i> Container Width: 
+                        <span id="width-value" class="value-display">400px</span>
+                    </label>
+                    <input type="range" id="container-width" min="300" max="600" step="50" value="400">
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-code"></i> Current CSS
+                    </label>
+                    <div id="generated-css" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 10px;
+}
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="applyFrSettings()">
+                        <i class="fas fa-play"></i> Apply FR Values
+                    </button>
+                    <button onclick="resetFrDemo()" style="background: var(--danger);">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Try This:</strong> Set columns to 3fr, 1fr, 1fr. Notice how the first column gets 3/5 (60%) of the total space!
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-grid" id="grid-container">
+                    <div class="demo-grid-item">Column 1</div>
+                    <div class="demo-grid-item">Column 2</div>
+                    <div class="demo-grid-item">Column 3</div>
+                </div>
+                <div style="width: 100%; text-align: center;">
+                    <div style="display: inline-block; padding: 8px 20px; background: var(--primary); color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                        <i class="fas fa-calculator"></i> Total: <span id="total-fr">4</span>fr • Ratio: <span id="ratio-display">1:2:1</span>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Each column's width = (its fr value ÷ total fr) × available space
+                </p>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(5, 150, 105, 0.1); border-radius: 8px; text-align: center;">
+                    <p style="margin: 0; font-size: 0.9rem; color: var(--success);">
+                        <i class="fas fa-calculator"></i> <strong>Math:</strong> Col 1 = 1/4 = 25% • Col 2 = 2/4 = 50% • Col 3 = 1/4 = 25%
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge: Create a Responsive Dashboard</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Create a responsive dashboard layout using fr units.</p>
+                <ol>
+                    <li>Create a 4-column grid with a sidebar, main content area, and two smaller widgets</li>
+                    <li>Make the sidebar 200px fixed width</li>
+                    <li>Make the main content area take 3× more space than each widget</li>
+                    <li>Make the two widgets equal size</li>
+                    <li>Ensure the layout fills the entire container width</li>
+                    <li>Extra credit: Add a 20px gap between all columns</li>
+                </ol>
+                <p><strong>Hint:</strong> You'll need mixed units: <code>200px</code> for the sidebar, and <code>fr</code> units for the rest with a 3:1:1 ratio!</p>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-grid">
+                    <div class="challenge-grid-item" style="background: var(--primary);">Sidebar (200px)</div>
+                    <div class="challenge-grid-item" style="background: var(--success);">Main Content (3fr)</div>
+                    <div class="challenge-grid-item" style="background: var(--warning);">Widget 1 (1fr)</div>
+                    <div class="challenge-grid-item" style="background: var(--warning);">Widget 2 (1fr)</div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="applyChallengeStep('grid')">
+                    <i class="fas fa-wrench"></i> Enable Grid
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('sidebar')">
+                    <i class="fas fa-wrench"></i> Add Fixed Sidebar
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('fr')">
+                    <i class="fas fa-wrench"></i> Add FR Columns
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('all')">
+                    <i class="fas fa-wrench"></i> Complete Dashboard
+                </button>
+                
+                <button class="challenge-btn" onclick="showChallengeSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="challenge-solution" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* Complete responsive dashboard solution */
+.dashboard {
+  display: grid; /* Activate CSS Grid */
+  
+  /* Mixed units: fixed sidebar + flexible content */
+  grid-template-columns: 200px 3fr 1fr 1fr;
+  
+  /* Add spacing between columns */
+  gap: 20px;
+}
+
+/* Alternative: Using auto for sidebar */
+.dashboard {
+  display: grid;
+  grid-template-columns: auto 3fr 1fr 1fr;
+  gap: 20px;
+}
+
+/* How it works:
+   1. Sidebar gets exactly 200px
+   2. Remaining space is divided into 5 parts (3 + 1 + 1)
+   3. Main content gets 3/5 of remaining space
+   4. Each widget gets 1/5 of remaining space
+*/</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📐
+                </div>
+                <div class="takeaway-content">
+                    <h4>The fr Unit</h4>
+                    <p>Represents a fraction of available space in the grid container after fixed tracks and gaps.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🔄
+                </div>
+                <div class="takeaway-content">
+                    <h4>Responsive by Default</h4>
+                    <p>fr units automatically adjust to container size - no media queries needed!</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🧮
+                </div>
+                <div class="takeaway-content">
+                    <h4>Proportional Distribution</h4>
+                    <p>Columns get space proportional to their fr values: 2fr gets 2× more space than 1fr.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    ⚡
+                </div>
+                <div class="takeaway-content">
+                    <h4>Mix with Fixed Units</h4>
+                    <p>Combine px and fr units in the same grid: <code>250px 1fr 2fr</code></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="lesson2.1.html" class="nav-btn prev-btn">
+            <i class="fas fa-arrow-left"></i> Previous: Grid Rows & Columns
+        </a>
+        <a href="lesson2.3.html" class="nav-btn next-btn">
+            Next: Grid Gaps and Alignment
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 2, Lesson 2 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: fr unit, fractional grids, responsive layouts, mixing units
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> Excellent! You've mastered flexible, responsive grids with the fr unit.
+        </p>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: var(--secondary);">
+            <i class="fas fa-arrow-right"></i> Next: Learn about grid gaps, alignment, and perfect spacing
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const col1Fr = document.getElementById('col1-fr');
+        const col1Value = document.getElementById('col1-value');
+        const col2Fr = document.getElementById('col2-fr');
+        const col2Value = document.getElementById('col2-value');
+        const col3Fr = document.getElementById('col3-fr');
+        const col3Value = document.getElementById('col3-value');
+        const containerWidth = document.getElementById('container-width');
+        const widthValue = document.getElementById('width-value');
+        const gridContainer = document.getElementById('grid-container');
+        const generatedCss = document.getElementById('generated-css');
+        const totalFr = document.getElementById('total-fr');
+        const ratioDisplay = document.getElementById('ratio-display');
+        const challengeGrid = document.getElementById('challenge-grid');
+        const challengeSolution = document.getElementById('challenge-solution');
+        const feedback = document.getElementById('feedback');
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            col1Fr.addEventListener('input', updateFrValues);
+            col2Fr.addEventListener('input', updateFrValues);
+            col3Fr.addEventListener('input', updateFrValues);
+            containerWidth.addEventListener('input', updateContainerWidth);
+            
+            // Set initial state
+            updateFrValues();
+            updateContainerWidth();
+            applyFrSettings();
+        }
+
+        // Update FR values display
+        function updateFrValues() {
+            const val1 = parseInt(col1Fr.value);
+            const val2 = parseInt(col2Fr.value);
+            const val3 = parseInt(col3Fr.value);
+            
+            col1Value.textContent = `${val1}fr`;
+            col2Value.textContent = `${val2}fr`;
+            col3Value.textContent = `${val3}fr`;
+            
+            // Update total and ratio
+            const total = val1 + val2 + val3;
+            totalFr.textContent = total;
+            ratioDisplay.textContent = `${val1}:${val2}:${val3}`;
+            
+            // Update CSS display
+            generatedCss.textContent = `.container {\n  display: grid;\n  grid-template-columns: ${val1}fr ${val2}fr ${val3}fr;\n  gap: 10px;\n}`;
+        }
+
+        // Update container width
+        function updateContainerWidth() {
+            const width = parseInt(containerWidth.value);
+            widthValue.textContent = `${width}px`;
+            gridContainer.style.width = `${width}px`;
+        }
+
+        // Apply FR settings to demo
+        function applyFrSettings() {
+            const val1 = parseInt(col1Fr.value);
+            const val2 = parseInt(col2Fr.value);
+            const val3 = parseInt(col3Fr.value);
+            
+            // Apply to grid container
+            gridContainer.style.display = 'grid';
+            gridContainer.style.gridTemplateColumns = `${val1}fr ${val2}fr ${val3}fr`;
+            gridContainer.style.gap = '10px';
+            
+            // Update item labels to show proportions
+            const items = gridContainer.querySelectorAll('.demo-grid-item');
+            const total = val1 + val2 + val3;
+            
+            items[0].textContent = `Column 1 (${val1}fr = ${Math.round((val1/total)*100)}%)`;
+            items[1].textContent = `Column 2 (${val2}fr = ${Math.round((val2/total)*100)}%)`;
+            items[2].textContent = `Column 3 (${val3}fr = ${Math.round((val3/total)*100)}%)`;
+            
+            showFeedback(`Applied grid: ${val1}fr ${val2}fr ${val3}fr (Total: ${total}fr)`);
+        }
+
+        // Reset FR demo
+        function resetFrDemo() {
+            col1Fr.value = '1';
+            col2Fr.value = '2';
+            col3Fr.value = '1';
+            containerWidth.value = '400';
+            
+            updateFrValues();
+            updateContainerWidth();
+            applyFrSettings();
+            showFeedback('Reset to default 1fr 2fr 1fr grid');
+        }
+
+        // Apply challenge step
+        function applyChallengeStep(step) {
+            if (step === 'grid' || step === 'all') {
+                challengeGrid.style.display = 'grid';
+            }
+            
+            if (step === 'sidebar' || step === 'all') {
+                challengeGrid.style.gridTemplateColumns = '200px 1fr 1fr 1fr';
+            }
+            
+            if (step === 'fr' || step === 'all') {
+                challengeGrid.style.gridTemplateColumns = '200px 3fr 1fr 1fr';
+            }
+            
+            if (step === 'all') {
+                challengeGrid.style.gap = '20px';
+            }
+            
+            if (step === 'grid') {
+                showFeedback('Grid activated! All items in single column');
+            } else if (step === 'sidebar') {
+                showFeedback('Fixed sidebar added! Other columns equal');
+            } else if (step === 'fr') {
+                showFeedback('FR proportions set! Main content gets 3× more space');
+            } else if (step === 'all') {
+                showFeedback('Perfect! Responsive dashboard complete');
+            }
+        }
+
+        // Show challenge solution
+        function showChallengeSolution() {
+            // Show the solution
+            challengeSolution.style.display = 'block';
+            
+            // Apply the solution
+            applyChallengeStep('all');
+            
+            showFeedback('Applied complete dashboard solution');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            // Reset to original
+            challengeGrid.style.display = '';
+            challengeGrid.style.gridTemplateColumns = '';
+            challengeGrid.style.gap = '';
+            
+            challengeSolution.style.display = 'none';
+            showFeedback('Challenge reset to original');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

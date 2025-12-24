@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 1.3 - Justify Content: Aligning Along Main Axis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .review-code {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Main axis reminder */
+        .axis-reminder {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .axis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .axis-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .axis-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            height: 150px;
+            position: relative;
+        }
+
+        .axis-line {
+            width: 80%;
+            height: 4px;
+            background: var(--danger);
+            position: relative;
+        }
+
+        .axis-label {
+            position: absolute;
+            font-weight: bold;
+            color: var(--danger);
+        }
+
+        .main-axis-label {
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+        }
+
+        .flex-items {
+            position: absolute;
+            display: flex;
+            gap: 10px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .axis-item {
+            width: 60px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* Justify values showcase */
+        .justify-showcase {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .showcase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .showcase-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .value-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .value-demo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .value-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .value-visual {
+            height: 120px;
+            margin: 20px 0;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+            padding: 15px;
+        }
+
+        .justify-item {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-box {
+            width: 400px;
+            height: 180px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            display: flex;
+        }
+
+        .demo-item {
+            background: var(--secondary);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        select:focus, input:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Real world examples */
+        .real-world {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .real-world-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .real-world-header h3 {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .example-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .showcase-item {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .showcase-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .showcase-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .showcase-visual {
+            height: 150px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+        }
+
+        .nav-visual {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        .center-visual {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        .space-between-visual {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        .space-around-visual {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        .showcase-item-code {
+            font-family: 'Courier New', monospace;
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 250px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-box {
+            width: 400px;
+            height: 220px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            display: flex;
+        }
+
+        .challenge-item {
+            background: var(--warning);
+            color: white;
+            padding: 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .example-showcase {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-box, #challenge-box {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Code highlighting */
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        .code-selector {
+            color: #fbbf24;
+        }
+
+        /* Special highlight for justify-content */
+        .highlight {
+            background: rgba(255, 242, 200, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .highlight strong {
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step completed">
+            <div class="step-number">1.1</div>
+            <div class="step-label">Display & Flex Intro</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">1.2</div>
+            <div class="step-label">Flex Direction</div>
+        </div>
+        <div class="progress-step current">
+            <div class="step-number">1.3</div>
+            <div class="step-label">Justify Content</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.4</div>
+            <div class="step-label">Align Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.5</div>
+            <div class="step-label">Flex Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.6</div>
+            <div class="step-label">Flex Wrap & Gap</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>Justify Content: Aligning Along Main Axis</h1>
+        <p class="lesson-goal">Master how to distribute and align flex items along the main axis</p>
+        <div class="module-tag">
+            <i class="fas fa-layer-group"></i> Module 1: Flexbox Fundamentals • Lesson 3 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> Quick Review: flex-direction & Axes</h3>
+        <p>In Lesson 1.2, you learned about controlling layout direction with flex-direction:</p>
+        
+        <div class="review-grid">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--primary);">
+                    <i class="fas fa-arrows-alt-h"></i>
+                </div>
+                <h4>Main Axis</h4>
+                <p>The primary direction items flow</p>
+                <div class="review-code">flex-direction: row;</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-arrows-alt-v"></i>
+                </div>
+                <h4>Cross Axis</h4>
+                <p>The perpendicular direction</p>
+                <div class="review-code">flex-direction: column;</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h4>Axis Swap</h4>
+                <p>Row → horizontal main axis<br>Column → vertical main axis</p>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--secondary);">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h4>Today's Question</h4>
+                <p>How do we control spacing and alignment along the main axis?</p>
+                <div class="review-code">justify-content: ???</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-align-center"></i> Introducing justify-content</h2>
+        
+        <div class="explanation">
+            <p><strong>justify-content</strong> is a CSS property that controls how flex items are distributed and aligned <em>along the main axis</em> of the flex container. It answers the question: "How should the available space be distributed around or between my flex items?"</p>
+        </div>
+
+        <div class="analogy">
+            <strong>🎪 Theater Seating Analogy</strong>
+            <p>Imagine arranging chairs in a theater row:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>flex-start:</strong> Push all chairs to the left side</li>
+                <li><strong>center:</strong> Center all chairs in the row</li>
+                <li><strong>flex-end:</strong> Push all chairs to the right side</li>
+                <li><strong>space-between:</strong> Equal space between chairs, none at ends</li>
+                <li><strong>space-around:</strong> Equal space around each chair</li>
+                <li><strong>space-evenly:</strong> Equal space between and around chairs</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <p><strong>💡 Key Insight:</strong> <code>justify-content</code> only affects spacing along the <em>main axis</em>. If your <code>flex-direction</code> is <code>row</code>, it controls horizontal spacing. If it's <code>column</code>, it controls vertical spacing!</p>
+        </div>
+    </div>
+
+    <!-- Main axis reminder -->
+    <div class="axis-reminder">
+        <div class="axis-header">
+            <h3><i class="fas fa-bullseye"></i> Reminder: Main Axis Direction</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-map-signs"></i> Your Layout Highway
+            </div>
+        </div>
+
+        <p>Justify-content distributes items along this red line (the main axis):</p>
+
+        <div class="axis-visual">
+            <div class="axis-line"></div>
+            <div class="axis-label main-axis-label">Main Axis →</div>
+            <div class="flex-items">
+                <div class="axis-item">Item 1</div>
+                <div class="axis-item">Item 2</div>
+                <div class="axis-item">Item 3</div>
+            </div>
+        </div>
+
+        <div class="syntax-code" style="font-size: 0.9rem;">
+<span class="code-comment">/* The container's main axis (red line above) */</span><br>
+<span class="code-selector">.container</span> {<br>
+&nbsp;&nbsp;<span class="code-property">display</span>: <span class="code-value">flex</span>;<br>
+&nbsp;&nbsp;<span class="code-property">flex-direction</span>: <span class="code-value">row</span>; <span class="code-comment">/* ← This sets the main axis */</span><br>
+&nbsp;&nbsp;<span class="code-property">justify-content</span>: <span class="code-value">flex-start</span>; <span class="code-comment">/* ← This distributes along it */</span><br>
+}
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-sync-alt"></i>
+                <strong>Remember:</strong> If you change <code>flex-direction: column</code>, the main axis becomes vertical, and <code>justify-content</code> will distribute items vertically!
+            </p>
+        </div>
+    </div>
+
+    <!-- Justify values showcase -->
+    <div class="justify-showcase">
+        <div class="showcase-header">
+            <h3><i class="fas fa-grip-horizontal"></i> The Six justify-content Values</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-sliders-h"></i> 6 Distribution Options
+            </div>
+        </div>
+        
+        <p>Here are all six values for <code>justify-content</code> with visual examples:</p>
+
+        <div class="values-grid">
+            <div class="value-demo">
+                <div class="value-title">flex-start (default)</div>
+                <p>Items packed at the start of the main axis</p>
+                <div class="value-visual">
+                    <div style="display: flex; justify-content: flex-start; width: 100%; height: 100%; gap: 10px; align-items: center;">
+                        <div class="justify-item">1</div>
+                        <div class="justify-item">2</div>
+                        <div class="justify-item">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;justify-content: flex-start;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">flex-end</div>
+                <p>Items packed at the end of the main axis</p>
+                <div class="value-visual">
+                    <div style="display: flex; justify-content: flex-end; width: 100%; height: 100%; gap: 10px; align-items: center;">
+                        <div class="justify-item">1</div>
+                        <div class="justify-item">2</div>
+                        <div class="justify-item">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;justify-content: flex-end;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">center</div>
+                <p>Items centered along the main axis</p>
+                <div class="value-visual">
+                    <div style="display: flex; justify-content: center; width: 100%; height: 100%; gap: 10px; align-items: center;">
+                        <div class="justify-item">1</div>
+                        <div class="justify-item">2</div>
+                        <div class="justify-item">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;justify-content: center;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">space-between</div>
+                <p>Equal space between items, none at ends</p>
+                <div class="value-visual">
+                    <div style="display: flex; justify-content: space-between; width: 100%; height: 100%; align-items: center;">
+                        <div class="justify-item">1</div>
+                        <div class="justify-item">2</div>
+                        <div class="justify-item">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;justify-content: space-between;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">space-around</div>
+                <p>Equal space around each item</p>
+                <div class="value-visual">
+                    <div style="display: flex; justify-content: space-around; width: 100%; height: 100%; align-items: center;">
+                        <div class="justify-item">1</div>
+                        <div class="justify-item">2</div>
+                        <div class="justify-item">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;justify-content: space-around;<br>
+}
+                </div>
+            </div>
+            
+            <div class="value-demo">
+                <div class="value-title">space-evenly</div>
+                <p>Equal space between and around items</p>
+                <div class="value-visual">
+                    <div style="display: flex; justify-content: space-evenly; width: 100%; height: 100%; align-items: center;">
+                        <div class="justify-item">1</div>
+                        <div class="justify-item">2</div>
+                        <div class="justify-item">3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.container {<br>
+&nbsp;&nbsp;justify-content: space-evenly;<br>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> Interactive Justify Playground</h3>
+            <div style="color: var(--primary); font-weight: 600;">
+                <i class="fas fa-gamepad"></i> Experiment Live
+            </div>
+        </div>
+
+        <p>Try different justify-content values. Watch how items move along the main axis!</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="justify-select">
+                        <i class="fas fa-align-center"></i> Choose justify-content
+                    </label>
+                    <select id="justify-select">
+                        <option value="flex-start">flex-start (default)</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="direction-select">
+                        <i class="fas fa-arrows-alt-h"></i> Change Flex Direction
+                    </label>
+                    <select id="direction-select">
+                        <option value="row">row (horizontal main axis)</option>
+                        <option value="column">column (vertical main axis)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="item-count-slider">
+                        <i class="fas fa-cubes"></i> Number of Items: 
+                        <span id="item-count-value" class="value-display">3</span>
+                    </label>
+                    <input type="range" id="item-count-slider" min="1" max="6" step="1" value="3">
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-code"></i> Current CSS
+                    </label>
+                    <div id="current-css" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.container {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-direction: row;<br>
+&nbsp;&nbsp;justify-content: flex-start;<br>
+}
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="applyJustify()">
+                        <i class="fas fa-play"></i> Apply Settings
+                    </button>
+                    <button onclick="resetDemo()" style="background: var(--danger);">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Experiment:</strong> Try different flex-direction with each justify-content value. Notice how the main axis changes!
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-box" id="demo-container">
+                    <div class="demo-item">Item 1</div>
+                    <div class="demo-item">Item 2</div>
+                    <div class="demo-item">Item 3</div>
+                </div>
+                <div style="width: 100%; text-align: center;">
+                    <div style="display: inline-block; padding: 8px 20px; background: var(--danger); color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                        Main Axis Direction →
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Red arrow shows main axis direction
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real world examples -->
+    <div class="real-world">
+        <div class="real-world-header">
+            <h3><i class="fas fa-globe"></i> Real-World Applications</h3>
+            <div style="color: var(--secondary); font-weight: 600;">
+                <i class="fas fa-rocket"></i> Practical Layouts
+            </div>
+        </div>
+
+        <p>Here's how justify-content creates common web layouts:</p>
+
+        <div class="example-showcase">
+            <div class="showcase-item">
+                <div class="showcase-title">Navigation Bar (space-between)</div>
+                <p>Logo on left, menu on right, empty space between</p>
+                <div class="showcase-visual">
+                    <div class="nav-visual" style="justify-content: space-between; align-items: center;">
+                        <div class="justify-item" style="background: var(--primary);">Logo</div>
+                        <div style="display: flex; gap: 10px;">
+                            <div class="justify-item" style="background: var(--secondary);">Home</div>
+                            <div class="justify-item" style="background: var(--secondary);">About</div>
+                            <div class="justify-item" style="background: var(--secondary);">Contact</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.navbar {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;justify-content: space-between;<br>
+&nbsp;&nbsp;align-items: center;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Hero Section (center)</div>
+                <p>Centered content blocks in hero sections</p>
+                <div class="showcase-visual">
+                    <div class="center-visual" style="justify-content: center; align-items: center;">
+                        <div class="justify-item" style="background: var(--success); width: 80%; height: 60%; display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center; color: white;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">Welcome!</div>
+                                <div>Centered hero content</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.hero {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;justify-content: center;<br>
+&nbsp;&nbsp;align-items: center;<br>
+&nbsp;&nbsp;min-height: 400px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Evenly Spaced Cards (space-evenly)</div>
+                <p>Cards with equal spacing between and around</p>
+                <div class="showcase-visual">
+                    <div class="space-around-visual" style="justify-content: space-evenly; align-items: center;">
+                        <div class="justify-item" style="background: var(--warning); height: 80%;">Card 1</div>
+                        <div class="justify-item" style="background: var(--warning); height: 80%;">Card 2</div>
+                        <div class="justify-item" style="background: var(--warning); height: 80%;">Card 3</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.card-container {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;justify-content: space-evenly;<br>
+&nbsp;&nbsp;gap: 20px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Footer Links (space-around)</div>
+                <p>Footer links with equal space around each</p>
+                <div class="showcase-visual">
+                    <div class="space-around-visual" style="justify-content: space-around; align-items: center;">
+                        <div class="justify-item" style="background: var(--info);">Privacy</div>
+                        <div class="justify-item" style="background: var(--info);">Terms</div>
+                        <div class="justify-item" style="background: var(--info);">Contact</div>
+                        <div class="justify-item" style="background: var(--info);">Careers</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.footer-links {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;justify-content: space-around;<br>
+&nbsp;&nbsp;width: 100%;<br>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge: Perfect Navigation</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Create the perfect navigation bar layout that web developers use daily.</p>
+                <ol>
+                    <li>Start with a container containing a logo and 3 navigation items</li>
+                    <li>Use <code>justify-content</code> to position the logo on the left and nav items on the right</li>
+                    <li>Make all items vertically centered</li>
+                    <li>Add appropriate spacing between navigation items</li>
+                    <li>Test different justify-content values to see which one works best</li>
+                </ol>
+                <p><strong>Hint:</strong> You'll need to use <code>space-between</code> or combine multiple techniques!</p>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-box">
+                    <div class="challenge-item" style="background: var(--primary);">LOGO</div>
+                    <div class="challenge-item">Home</div>
+                    <div class="challenge-item">Products</div>
+                    <div class="challenge-item">Contact</div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="testLayout('space-between')">
+                    <i class="fas fa-wrench"></i> Test space-between
+                </button>
+                
+                <button class="challenge-btn" onclick="testLayout('space-around')">
+                    <i class="fas fa-wrench"></i> Test space-around
+                </button>
+                
+                <button class="challenge-btn" onclick="testLayout('flex-start')">
+                    <i class="fas fa-wrench"></i> Test flex-start
+                </button>
+                
+                <button class="challenge-btn" onclick="testLayout('flex-end')">
+                    <i class="fas fa-wrench"></i> Test flex-end
+                </button>
+                
+                <button class="challenge-btn" onclick="showChallengeSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="challenge-solution" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* Solution 1: Using space-between */
+.navbar {
+  display: flex;
+  justify-content: space-between; /* Logo left, items right */
+  align-items: center; /* Vertically center */
+}
+
+.nav-items {
+  display: flex;
+  gap: 20px; /* Space between nav items */
+}
+
+/* Or Solution 2: Using auto margins */
+.navbar {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  margin-right: auto; /* Pushes everything else to the right */
+}
+
+.nav-items {
+  display: flex;
+  gap: 20px;
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    ↔️
+                </div>
+                <div class="takeaway-content">
+                    <h4>Main Axis Only</h4>
+                    <p><code>justify-content</code> distributes items along the main axis only.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🎯
+                </div>
+                <div class="takeaway-content">
+                    <h4>Six Values</h4>
+                    <p><code>flex-start</code>, <code>flex-end</code>, <code>center</code>, <code>space-between</code>, <code>space-around</code>, <code>space-evenly</code></p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📏
+                </div>
+                <div class="takeaway-content">
+                    <h4>Space Distribution</h4>
+                    <p>Controls how leftover space is distributed between/around items.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🧭
+                </div>
+                <div class="takeaway-content">
+                    <h4>Works with Direction</h4>
+                    <p>Changes based on <code>flex-direction</code> (row = horizontal, column = vertical).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="./lesson1.2.html" class="nav-btn prev-btn">
+            <i class="fas fa-arrow-left"></i> Previous: Flex Direction
+        </a>
+        <a href="./lesson1.4.html" class="nav-btn next-btn">
+            Next: Align Items
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 1, Lesson 3 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: justify-content, main axis alignment, space distribution
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> You can now perfectly align items along any axis!
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const justifySelect = document.getElementById('justify-select');
+        const directionSelect = document.getElementById('direction-select');
+        const itemCountSlider = document.getElementById('item-count-slider');
+        const itemCountValue = document.getElementById('item-count-value');
+        const demoContainer = document.getElementById('demo-container');
+        const currentCss = document.getElementById('current-css');
+        const challengeBox = document.getElementById('challenge-box');
+        const challengeSolution = document.getElementById('challenge-solution');
+        const feedback = document.getElementById('feedback');
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            justifySelect.addEventListener('change', updateCSSDisplay);
+            directionSelect.addEventListener('change', updateCSSDisplay);
+            itemCountSlider.addEventListener('input', updateItemCount);
+            
+            // Set initial state
+            updateItemCount();
+            updateCSSDisplay();
+        }
+
+        // Update item count
+        function updateItemCount() {
+            const count = parseInt(itemCountSlider.value);
+            itemCountValue.textContent = count;
+            
+            // Clear current items
+            demoContainer.innerHTML = '';
+            
+            // Add new items
+            for (let i = 1; i <= count; i++) {
+                const item = document.createElement('div');
+                item.className = 'demo-item';
+                item.textContent = `Item ${i}`;
+                demoContainer.appendChild(item);
+            }
+            
+            updateCSSDisplay();
+        }
+
+        // Update CSS display
+        function updateCSSDisplay() {
+            const justifyValue = justifySelect.value;
+            const directionValue = directionSelect.value;
+            
+            // Update CSS display
+            currentCss.textContent = `.container {\n  display: flex;\n  flex-direction: ${directionValue};\n  justify-content: ${justifyValue};\n}`;
+        }
+
+        // Apply justify settings to demo
+        function applyJustify() {
+            const justifyValue = justifySelect.value;
+            const directionValue = directionSelect.value;
+            
+            // Apply to demo container
+            demoContainer.style.justifyContent = justifyValue;
+            demoContainer.style.flexDirection = directionValue;
+            
+            // Adjust alignment for column layout
+            if (directionValue === 'column') {
+                demoContainer.style.alignItems = 'flex-start';
+                demoContainer.style.height = '250px';
+                demoContainer.style.gap = '10px';
+            } else {
+                demoContainer.style.alignItems = 'center';
+                demoContainer.style.height = '180px';
+                demoContainer.style.gap = '';
+            }
+            
+            // Update main axis indicator
+            const axisIndicator = document.querySelector('.demo-preview > div:nth-child(2) > div');
+            if (directionValue === 'column') {
+                axisIndicator.innerHTML = 'Main Axis Direction ↓';
+                axisIndicator.style.padding = '15px 8px';
+            } else {
+                axisIndicator.innerHTML = 'Main Axis Direction →';
+                axisIndicator.style.padding = '8px 20px';
+            }
+            
+            showFeedback(`Applied justify-content: ${justifyValue} with direction: ${directionValue}`);
+        }
+
+        // Reset demo
+        function resetDemo() {
+            justifySelect.value = 'flex-start';
+            directionSelect.value = 'row';
+            itemCountSlider.value = 3;
+            
+            updateItemCount();
+            applyJustify();
+            showFeedback('Reset to default settings');
+        }
+
+        // Test layout in challenge
+        function testLayout(justifyValue) {
+            challengeBox.style.justifyContent = justifyValue;
+            
+            // Special handling for navigation challenge
+            if (justifyValue === 'space-between') {
+                // This gives us logo on left, items on right
+                showFeedback('Perfect! space-between puts logo left, nav items right');
+            } else if (justifyValue === 'space-around') {
+                showFeedback('space-around gives equal space around each item, including logo');
+            } else if (justifyValue === 'flex-start') {
+                showFeedback('flex-start packs all items to the left');
+            } else if (justifyValue === 'flex-end') {
+                showFeedback('flex-end packs all items to the right');
+            }
+        }
+
+        // Show challenge solution
+        function showChallengeSolution() {
+            // Show the advanced solution with nested flex
+            challengeSolution.style.display = 'block';
+            
+            // Create a better visual solution
+            challengeBox.innerHTML = '';
+            
+            // Create the structure for solution
+            const logo = document.createElement('div');
+            logo.className = 'challenge-item';
+            logo.textContent = 'LOGO';
+            logo.style.background = 'var(--primary)';
+            logo.style.marginRight = 'auto'; // This is key!
+            
+            const navContainer = document.createElement('div');
+            navContainer.style.display = 'flex';
+            navContainer.style.gap = '20px';
+            
+            const navItems = ['Home', 'Products', 'Contact'];
+            navItems.forEach(itemText => {
+                const item = document.createElement('div');
+                item.className = 'challenge-item';
+                item.textContent = itemText;
+                navContainer.appendChild(item);
+            });
+            
+            challengeBox.appendChild(logo);
+            challengeBox.appendChild(navContainer);
+            challengeBox.style.justifyContent = 'flex-start'; // Reset to default
+            challengeBox.style.alignItems = 'center';
+            
+            showFeedback('Showing advanced solution with auto margin and nested flex');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            // Reset to original structure
+            challengeBox.innerHTML = '';
+            
+            const items = [
+                {text: 'LOGO', bg: 'var(--primary)'},
+                {text: 'Home', bg: 'var(--warning)'},
+                {text: 'Products', bg: 'var(--warning)'},
+                {text: 'Contact', bg: 'var(--warning)'}
+            ];
+            
+            items.forEach(item => {
+                const element = document.createElement('div');
+                element.className = 'challenge-item';
+                element.textContent = item.text;
+                element.style.background = item.bg;
+                challengeBox.appendChild(element);
+            });
+            
+            challengeBox.style.justifyContent = 'flex-start';
+            challengeBox.style.alignItems = 'center';
+            challengeSolution.style.display = 'none';
+            
+            showFeedback('Challenge reset to original');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

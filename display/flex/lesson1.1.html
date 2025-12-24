@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 1.1 - The Display Property & Introduction to Flex</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .review-code {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Display properties visual */
+        .display-visual {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .display-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .display-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .display-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .display-type {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .display-type:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .display-visual-box {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .block-visual {
+            display: block;
+            width: 100%;
+        }
+
+        .block-item {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            margin: 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .flex-visual {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .flex-item {
+            background: var(--success);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .inline-visual {
+            display: inline;
+        }
+
+        .inline-item {
+            background: var(--warning);
+            color: white;
+            padding: 5px 10px;
+            margin: 0 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-box {
+            width: 300px;
+            height: 200px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .demo-item {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            margin: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        select:focus, input:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Flex introduction */
+        .flex-intro {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .flex-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .flex-header h3 {
+            color: var(--success);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        .flex-concept {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .flex-concept h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .flex-concept .icon {
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            margin: 0 auto 15px;
+        }
+
+        /* Before/After comparison */
+        .comparison {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--border);
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .comparison-header h3 {
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .comparison-title {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .before-items {
+            display: block;
+        }
+
+        .after-items {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            min-height: 150px;
+        }
+
+        .item {
+            background: var(--secondary);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 200px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-box {
+            width: 350px;
+            height: 180px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+        }
+
+        .challenge-item {
+            background: var(--warning);
+            color: white;
+            padding: 20px;
+            margin: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .display-types {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Code highlighting */
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        .code-selector {
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step current">
+            <div class="step-number">1.1</div>
+            <div class="step-label">Display & Flex Intro</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.2</div>
+            <div class="step-label">Flex Direction</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.3</div>
+            <div class="step-label">Justify Content</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.4</div>
+            <div class="step-label">Align Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.5</div>
+            <div class="step-label">Flex Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.6</div>
+            <div class="step-label">Flex Wrap & Gap</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>The Display Property & Introduction to Flex</h1>
+        <p class="lesson-goal">Learn the foundation: how display property works and your first step into flexbox</p>
+        <div class="module-tag">
+            <i class="fas fa-layer-group"></i> Module 1: Flexbox Fundamentals • Lesson 1 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> Quick Review: What You Already Know</h3>
+        <p>Before we dive into flexbox, let's review what you already know about the CSS display property:</p>
+        
+        <div class="review-grid">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--primary);">
+                    <i class="fas fa-square"></i>
+                </div>
+                <h4>display: block</h4>
+                <p>Elements stack vertically, take full width</p>
+                <div class="review-code">div, p, h1, section</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-minus"></i>
+                </div>
+                <h4>display: inline</h4>
+                <p>Elements flow horizontally, width based on content</p>
+                <div class="review-code">span, a, strong, em</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-eye-slash"></i>
+                </div>
+                <h4>display: none</h4>
+                <p>Completely hides element from page</p>
+                <div class="review-code">visibility: hidden;</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--secondary);">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h4>The Problem</h4>
+                <p>Block and inline have limited layout options. What if we need more control?</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-lightbulb"></i> Introducing display: flex</h2>
+        
+        <div class="explanation">
+            <p><strong>display: flex</strong> is a CSS property value that turns an element into a <em>flex container</em>. Once an element is a flex container, its direct children automatically become <em>flex items</em> that you can easily arrange, align, and distribute.</p>
+        </div>
+
+        <div class="analogy">
+            <strong>📦 Moving Boxes Analogy</strong>
+            <p>Imagine you have three boxes on the floor:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Without flex:</strong> Boxes stack vertically (like display: block)</li>
+                <li><strong>With flex:</strong> You get a smart shelf that can arrange boxes horizontally, vertically, centered, or spaced evenly</li>
+                <li><strong>The magic:</strong> The shelf (flex container) controls how all boxes (flex items) are arranged</li>
+            </ul>
+        </div>
+
+        <div class="explanation">
+            <p>With <code>display: flex</code>, you're telling the browser: "Hey, I want all my children elements to be flexible and follow my layout rules!" This one line of code unlocks powerful layout capabilities that were previously difficult or impossible with traditional CSS.</p>
+        </div>
+    </div>
+
+    <!-- Display properties visual -->
+    <div class="display-visual">
+        <div class="display-header">
+            <h3><i class="fas fa-eye"></i> Visual Comparison: Block vs Flex</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-exchange-alt"></i> See the Difference
+            </div>
+        </div>
+
+        <p>Watch how the same HTML structure behaves differently with each display property:</p>
+
+        <div class="display-types">
+            <div class="display-type">
+                <h4>display: block (Default)</h4>
+                <p>Items stack vertically, each taking full width</p>
+                <div class="display-visual-box">
+                    <div class="block-visual">
+                        <div class="block-item">Item 1</div>
+                        <div class="block-item">Item 2</div>
+                        <div class="block-item">Item 3</div>
+                    </div>
+                </div>
+                <div class="syntax-code">
+<span class="code-selector">.container</span> {<br>
+&nbsp;&nbsp;<span class="code-property">display</span>: <span class="code-value">block</span>;<br>
+}
+                </div>
+            </div>
+
+            <div class="display-type">
+                <h4>display: flex (New!)</h4>
+                <p>Items arrange horizontally in a flexible row</p>
+                <div class="display-visual-box">
+                    <div class="flex-visual">
+                        <div class="flex-item">Item 1</div>
+                        <div class="flex-item">Item 2</div>
+                        <div class="flex-item">Item 3</div>
+                    </div>
+                </div>
+                <div class="syntax-code">
+<span class="code-selector">.container</span> {<br>
+&nbsp;&nbsp;<span class="code-property">display</span>: <span class="code-value">flex</span>;<br>
+}
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-bolt"></i>
+                <strong>One-line transformation:</strong> That's it! Just change <code>display: block</code> to <code>display: flex</code> and you unlock a whole new world of layout possibilities.
+            </p>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> Interactive Flex Demo</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-magic"></i> See It Live
+            </div>
+        </div>
+
+        <p>Toggle between block and flex display to see the transformation:</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="display-toggle">
+                        <i class="fas fa-toggle-on"></i> Toggle Display Property
+                    </label>
+                    <select id="display-toggle">
+                        <option value="block">display: block (Traditional)</option>
+                        <option value="flex" selected>display: flex (Flexbox)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-code"></i> Current CSS
+                    </label>
+                    <div id="current-css" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.container {<br>
+&nbsp;&nbsp;display: flex;<br>
+}
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="resetDemo()">
+                        <i class="fas fa-redo"></i> Reset Items
+                    </button>
+                    <button onclick="addItem()" style="background: var(--success);">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Notice:</strong> With <code>display: flex</code>, items automatically arrange in a row and shrink to fit the container!
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-box" id="demo-container">
+                    <div class="demo-item">Item 1</div>
+                    <div class="demo-item">Item 2</div>
+                    <div class="demo-item">Item 3</div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Container border shown in blue. Items are purple boxes.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flex introduction -->
+    <div class="flex-intro">
+        <div class="flex-header">
+            <h3><i class="fas fa-puzzle-piece"></i> How Flexbox Works</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-cogs"></i> Two-Level System
+            </div>
+        </div>
+        
+        <p>Flexbox works on a two-level system. Understanding this is key to mastering flexbox:</p>
+
+        <div class="flex-container">
+            <div class="flex-concept">
+                <div class="icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h4>1. Flex Container</h4>
+                <p>The parent element with <code>display: flex</code>. It controls the layout of its children.</p>
+                <div class="review-code">.container { display: flex; }</div>
+            </div>
+            
+            <div class="flex-concept">
+                <div class="icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <h4>2. Flex Items</h4>
+                <p>All direct children of the flex container. They become flexible and follow container rules.</p>
+                <div class="review-code">.item { /* automatically flex items */ }</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: rgba(5, 150, 105, 0.1); border-radius: 10px;">
+            <h4 style="color: var(--success); margin-bottom: 10px;"><i class="fas fa-sitemap"></i> HTML Structure Example</h4>
+            <div class="syntax-code">
+<span class="code-comment">&lt;!-- The container with display: flex --&gt;</span><br>
+&lt;<span class="code-keyword">div</span> <span class="code-property">class</span>=<span class="code-value">"container"</span>&gt;<br>
+&nbsp;&nbsp;<span class="code-comment">&lt;!-- These are the flex items --&gt;</span><br>
+&nbsp;&nbsp;&lt;<span class="code-keyword">div</span> <span class="code-property">class</span>=<span class="code-value">"item"</span>&gt;Item 1&lt;/<span class="code-keyword">div</span>&gt;<br>
+&nbsp;&nbsp;&lt;<span class="code-keyword">div</span> <span class="code-property">class</span>=<span class="code-value">"item"</span>&gt;Item 2&lt;/<span class="code-keyword">div</span>&gt;<br>
+&nbsp;&nbsp;&lt;<span class="code-keyword">div</span> <span class="code-property">class</span>=<span class="code-value">"item"</span>&gt;Item 3&lt;/<span class="code-keyword">div</span>&gt;<br>
+&lt;/<span class="code-keyword">div</span>&gt;
+            </div>
+            <p style="margin-top: 15px; color: #64748b;"><i class="fas fa-info-circle"></i> Remember: Only direct children become flex items. Grandchildren are not affected.</p>
+        </div>
+    </div>
+
+    <!-- Before/After comparison -->
+    <div class="comparison">
+        <div class="comparison-header">
+            <h3><i class="fas fa-columns"></i> Real-World Example: Navigation Bar</h3>
+            <div style="color: var(--warning); font-weight: 600;">
+                <i class="fas fa-star"></i> Common Use Case
+            </div>
+        </div>
+
+        <p>See how flexbox solves a common layout problem. Let's create a navigation bar:</p>
+
+        <div class="comparison-container">
+            <div class="comparison-box">
+                <div class="comparison-title" style="color: var(--danger);">
+                    <i class="fas fa-times-circle"></i> Without Flexbox (Hard)
+                </div>
+                <p>Using floats, inline-block, or tables</p>
+                <div class="before-items">
+                    <div class="item" style="display: inline-block; width: 23%;">Home</div>
+                    <div class="item" style="display: inline-block; width: 23%;">About</div>
+                    <div class="item" style="display: inline-block; width: 23%;">Services</div>
+                    <div class="item" style="display: inline-block; width: 23%;">Contact</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+<span class="code-selector">.nav-item</span> {<br>
+&nbsp;&nbsp;<span class="code-property">display</span>: <span class="code-value">inline-block</span>;<br>
+&nbsp;&nbsp;<span class="code-property">width</span>: <span class="code-value">23%</span>;<br>
+&nbsp;&nbsp;<span class="code-property">text-align</span>: <span class="code-value">center</span>;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> Problems: Fixed widths, manual math, fragile layout</p>
+            </div>
+            
+            <div class="comparison-box">
+                <div class="comparison-title" style="color: var(--success);">
+                    <i class="fas fa-check-circle"></i> With Flexbox (Easy!)
+                </div>
+                <p>Using display: flex on the container</p>
+                <div class="after-items">
+                    <div class="item">Home</div>
+                    <div class="item">About</div>
+                    <div class="item">Services</div>
+                    <div class="item">Contact</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+<span class="code-selector">.nav-container</span> {<br>
+&nbsp;&nbsp;<span class="code-property">display</span>: <span class="code-value">flex</span>;<br>
+}<br>
+<span class="code-selector">.nav-item</span> {<br>
+&nbsp;&nbsp;<span class="code-property">flex</span>: <span class="code-value">1</span>;<br>
+&nbsp;&nbsp;<span class="code-property">text-align</span>: <span class="code-value">center</span>;<br>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"><i class="fas fa-thumbs-up"></i> Benefits: Equal spacing, responsive, clean code</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Convert a vertical list of boxes into a horizontal row using flexbox.</p>
+                <ol>
+                    <li>Look at the box below with 3 stacked items (display: block by default)</li>
+                    <li>Your goal: Apply <code>display: flex</code> to make them appear in a row</li>
+                    <li>Test your solution using the "Apply Flexbox" button</li>
+                    <li>Once you see the horizontal layout, you've mastered your first flexbox concept!</li>
+                </ol>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-box">
+                    <div class="challenge-item">Box 1</div>
+                    <div class="challenge-item">Box 2</div>
+                    <div class="challenge-item">Box 3</div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="applyFlexbox()">
+                    <i class="fas fa-magic"></i> Apply Flexbox
+                </button>
+                
+                <button class="challenge-btn" onclick="showSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="solution-code" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* CSS Solution */
+#challenge-box {
+  display: flex; /* That's it! */
+}
+
+/* Optional: Add spacing between items */
+.challenge-item {
+  margin: 0 10px;
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🎯
+                </div>
+                <div class="takeaway-content">
+                    <h4>display: flex</h4>
+                    <p>Transforms an element into a flex container. All direct children become flex items.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🔄
+                </div>
+                <div class="takeaway-content">
+                    <h4>Automatic Horizontal Layout</h4>
+                    <p>By default, flex items arrange in a row (left to right).</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🏗️
+                </div>
+                <div class="takeaway-content">
+                    <h4>Two-Level System</h4>
+                    <p>1. Container controls layout. 2. Items follow container rules.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    💡
+                </div>
+                <div class="takeaway-content">
+                    <h4>One Line Transformation</h4>
+                    <p>Change display: block to display: flex to unlock powerful layouts.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="#" class="nav-btn prev-btn" onclick="return false;" style="opacity: 0.5; cursor: not-allowed;">
+            <i class="fas fa-arrow-left"></i> Previous (First Lesson)
+        </a>
+        <a href="./lesson1.2.html" class="nav-btn next-btn">
+            Next: Flex Direction
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 1, Lesson 1 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: display: flex, flex containers, flex items, basic transformation
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> You've taken your first step into CSS flexbox!
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const displayToggle = document.getElementById('display-toggle');
+        const demoContainer = document.getElementById('demo-container');
+        const currentCss = document.getElementById('current-css');
+        const challengeBox = document.getElementById('challenge-box');
+        const solutionCode = document.getElementById('solution-code');
+        const feedback = document.getElementById('feedback');
+        let itemCount = 3;
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            displayToggle.addEventListener('change', updateDemoDisplay);
+            
+            // Set initial state
+            updateDemoDisplay();
+        }
+
+        // Update demo display based on toggle
+        function updateDemoDisplay() {
+            const displayValue = displayToggle.value;
+            
+            // Update the container
+            demoContainer.style.display = displayValue;
+            
+            // Update the CSS display
+            currentCss.textContent = `.container {\n  display: ${displayValue};\n}`;
+            
+            // Add some styling for flex to make it clearer
+            if (displayValue === 'flex') {
+                demoContainer.style.justifyContent = 'space-around';
+                demoContainer.style.alignItems = 'center';
+            } else {
+                demoContainer.style.justifyContent = '';
+                demoContainer.style.alignItems = '';
+            }
+            
+            showFeedback(`Switched to display: ${displayValue}`);
+        }
+
+        // Reset demo
+        function resetDemo() {
+            // Remove all but first 3 items
+            const items = demoContainer.querySelectorAll('.demo-item');
+            items.forEach((item, index) => {
+                if (index >= 3) {
+                    item.remove();
+                }
+            });
+            
+            // Reset item count
+            itemCount = 3;
+            
+            showFeedback('Reset to 3 items');
+        }
+
+        // Add item to demo
+        function addItem() {
+            itemCount++;
+            const newItem = document.createElement('div');
+            newItem.className = 'demo-item';
+            newItem.textContent = `Item ${itemCount}`;
+            demoContainer.appendChild(newItem);
+            
+            showFeedback(`Added item ${itemCount}`);
+        }
+
+        // Apply flexbox to challenge
+        function applyFlexbox() {
+            challengeBox.style.display = 'flex';
+            challengeBox.style.justifyContent = 'space-around';
+            challengeBox.style.alignItems = 'center';
+            
+            // Update items
+            const items = challengeBox.querySelectorAll('.challenge-item');
+            items.forEach(item => {
+                item.style.margin = '0 10px';
+            });
+            
+            showFeedback('Applied flexbox! Items are now in a row.');
+        }
+
+        // Show solution
+        function showSolution() {
+            solutionCode.style.display = 'block';
+            showFeedback('Showing solution code');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            challengeBox.style.display = 'block';
+            challengeBox.style.justifyContent = '';
+            challengeBox.style.alignItems = '';
+            
+            // Reset items
+            const items = challengeBox.querySelectorAll('.challenge-item');
+            items.forEach(item => {
+                item.style.margin = '5px';
+            });
+            
+            solutionCode.style.display = 'none';
+            showFeedback('Challenge reset to default');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

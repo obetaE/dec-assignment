@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 1.2 - Flex Direction: The Layout Axis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .review-code {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Axis visualization */
+        .axis-visual {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .axis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .axis-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .axis-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .axis-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .axis-concept {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .axis-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .axis-diagram {
+            height: 200px;
+            position: relative;
+            margin: 20px 0;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .axis-line {
+            position: absolute;
+            background: var(--danger);
+            width: 80%;
+            height: 4px;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+        }
+
+        .axis-label {
+            position: absolute;
+            font-weight: bold;
+            color: var(--danger);
+        }
+
+        .main-axis-label {
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+        }
+
+        .cross-axis-label {
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-axis-line {
+            position: absolute;
+            background: var(--success);
+            width: 4px;
+            height: 80%;
+            left: 50%;
+            top: 10%;
+            transform: translateX(-50%);
+        }
+
+        /* Direction examples */
+        .direction-examples {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .examples-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .examples-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .examples-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .direction-example {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .direction-example:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .direction-title {
+            color: var(--text);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .direction-visual {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .row-visual {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .column-visual {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .direction-item {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-box {
+            width: 300px;
+            height: 200px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            display: flex;
+        }
+
+        .demo-item {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Real world examples */
+        .real-world {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .real-world-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .real-world-header h3 {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .example-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .showcase-item {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .showcase-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .showcase-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .showcase-visual {
+            height: 150px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .nav-visual {
+            display: flex;
+            height: 100%;
+            gap: 10px;
+        }
+
+        .sidebar-visual {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 10px;
+        }
+
+        .showcase-item-code {
+            font-family: 'Courier New', monospace;
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 250px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-box {
+            width: 350px;
+            height: 220px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            display: flex;
+        }
+
+        .challenge-item {
+            background: var(--warning);
+            color: white;
+            padding: 20px;
+            margin: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .examples-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Code highlighting */
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        .code-selector {
+            color: #fbbf24;
+        }
+
+        /* Arrow styles for visual guides */
+        .arrow {
+            position: absolute;
+            color: var(--danger);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .main-arrow {
+            top: 50%;
+            right: 5%;
+            transform: translateY(-50%);
+        }
+
+        .cross-arrow {
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%) rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step completed">
+            <div class="step-number">1.1</div>
+            <div class="step-label">Display & Flex Intro</div>
+        </div>
+        <div class="progress-step current">
+            <div class="step-number">1.2</div>
+            <div class="step-label">Flex Direction</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.3</div>
+            <div class="step-label">Justify Content</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.4</div>
+            <div class="step-label">Align Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.5</div>
+            <div class="step-label">Flex Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">1.6</div>
+            <div class="step-label">Flex Wrap & Gap</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>Flex Direction: The Layout Axis</h1>
+        <p class="lesson-goal">Learn to control your layout direction: row, column, and reverse variations</p>
+        <div class="module-tag">
+            <i class="fas fa-layer-group"></i> Module 1: Flexbox Fundamentals • Lesson 2 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> Quick Review: display: flex</h3>
+        <p>In Lesson 1.1, you learned that <code>display: flex</code> transforms elements into flexible containers:</p>
+        
+        <div class="review-grid">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--primary);">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h4>Flex Container</h4>
+                <p>Parent element with <code>display: flex</code></p>
+                <div class="review-code">.container { display: flex; }</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <h4>Flex Items</h4>
+                <p>Direct children of the container</p>
+                <div class="review-code">.item { /* automatically flex */ }</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-arrows-alt-h"></i>
+                </div>
+                <h4>Default: row</h4>
+                <p>By default, flex items arrange horizontally</p>
+                <div class="review-code">flex-direction: row;</div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--secondary);">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h4>Today's Question</h4>
+                <p>What if we want vertical layouts? Or reversed order?</p>
+                <div class="review-code">flex-direction: ???</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-compass"></i> Understanding Flex Direction</h2>
+        
+        <div class="explanation">
+            <p><strong>flex-direction</strong> is a CSS property that controls the <em>main axis</em> of your flex container. It tells flex items which direction to flow: horizontally, vertically, forward, or backward.</p>
+        </div>
+
+        <div class="analogy">
+            <strong>📚 Book Reading Analogy</strong>
+            <p>Think of flex-direction as choosing your reading direction:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>row:</strong> Like reading English - left to right</li>
+                <li><strong>row-reverse:</strong> Like reading Arabic - right to left</li>
+                <li><strong>column:</strong> Like reading Japanese manga - top to bottom</li>
+                <li><strong>column-reverse:</strong> Like scrolling up a chat - bottom to top</li>
+            </ul>
+        </div>
+
+        <div class="explanation">
+            <p>Remember: Flexbox works on <em>two axes</em> - the <strong>main axis</strong> (primary direction) and the <strong>cross axis</strong> (perpendicular direction). <code>flex-direction</code> determines which is which!</p>
+        </div>
+    </div>
+
+    <!-- Axis visualization -->
+    <div class="axis-visual">
+        <div class="axis-header">
+            <h3><i class="fas fa-arrows-alt"></i> The Two Axes: Main vs Cross</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-crosshairs"></i> Visual Guide
+            </div>
+        </div>
+
+        <p>Understanding axes is crucial for mastering flexbox. Here's how they work:</p>
+
+        <div class="axis-container">
+            <div class="axis-concept">
+                <div class="axis-title">Main Axis</div>
+                <p>The primary direction where flex items flow. Controlled by <code>flex-direction</code>.</p>
+                <div class="axis-diagram">
+                    <div class="axis-line" style="background: var(--danger);"></div>
+                    <div class="axis-label main-axis-label" style="color: var(--danger);">Main Axis</div>
+                    <div class="arrow main-arrow" style="color: var(--danger);">→</div>
+                </div>
+                <div class="review-code">flex-direction: row;</div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #64748b;">Controls item flow direction</p>
+            </div>
+
+            <div class="axis-concept">
+                <div class="axis-title">Cross Axis</div>
+                <p>The perpendicular direction. Used for alignment across the main axis.</p>
+                <div class="axis-diagram">
+                    <div class="cross-axis-line" style="background: var(--success);"></div>
+                    <div class="axis-label cross-axis-label" style="color: var(--success);">Cross Axis</div>
+                    <div class="arrow cross-arrow" style="color: var(--success);">↓</div>
+                </div>
+                <div class="review-code">align-items: center;</div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #64748b;">Controls vertical alignment</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Key insight:</strong> When you change <code>flex-direction</code>, you're swapping which axis is main and which is cross! <code>row</code> makes horizontal the main axis, <code>column</code> makes vertical the main axis.
+            </p>
+        </div>
+    </div>
+
+    <!-- Direction examples -->
+    <div class="direction-examples">
+        <div class="examples-header">
+            <h3><i class="fas fa-directions"></i> The Four Direction Values</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-list-ol"></i> 4 Options
+            </div>
+        </div>
+        
+        <p>Here are all four possible values for <code>flex-direction</code>:</p>
+
+        <div class="examples-grid">
+            <div class="direction-example">
+                <div class="direction-title">row (default)</div>
+                <p>Items flow left to right</p>
+                <div class="direction-visual">
+                    <div class="row-visual">
+                        <div class="direction-item">1</div>
+                        <div class="direction-item">2</div>
+                        <div class="direction-item">3</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+.container {<br>
+&nbsp;&nbsp;flex-direction: row;<br>
+}
+                </div>
+            </div>
+            
+            <div class="direction-example">
+                <div class="direction-title">row-reverse</div>
+                <p>Items flow right to left</p>
+                <div class="direction-visual">
+                    <div class="row-visual" style="flex-direction: row-reverse;">
+                        <div class="direction-item">1</div>
+                        <div class="direction-item">2</div>
+                        <div class="direction-item">3</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+.container {<br>
+&nbsp;&nbsp;flex-direction: row-reverse;<br>
+}
+                </div>
+            </div>
+            
+            <div class="direction-example">
+                <div class="direction-title">column</div>
+                <p>Items flow top to bottom</p>
+                <div class="direction-visual">
+                    <div class="column-visual">
+                        <div class="direction-item">1</div>
+                        <div class="direction-item">2</div>
+                        <div class="direction-item">3</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+.container {<br>
+&nbsp;&nbsp;flex-direction: column;<br>
+}
+                </div>
+            </div>
+            
+            <div class="direction-example">
+                <div class="direction-title">column-reverse</div>
+                <p>Items flow bottom to top</p>
+                <div class="direction-visual">
+                    <div class="column-visual" style="flex-direction: column-reverse;">
+                        <div class="direction-item">1</div>
+                        <div class="direction-item">2</div>
+                        <div class="direction-item">3</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+.container {<br>
+&nbsp;&nbsp;flex-direction: column-reverse;<br>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> Interactive Direction Playground</h3>
+            <div style="color: var(--primary); font-weight: 600;">
+                <i class="fas fa-gamepad"></i> Try It Yourself
+            </div>
+        </div>
+
+        <p>Experiment with different flex-direction values. Watch how the axis labels change!</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="direction-select">
+                        <i class="fas fa-arrows-alt-h"></i> Choose Flex Direction
+                    </label>
+                    <select id="direction-select">
+                        <option value="row">row (default) → left to right</option>
+                        <option value="row-reverse">row-reverse → right to left</option>
+                        <option value="column">column → top to bottom</option>
+                        <option value="column-reverse">column-reverse → bottom to top</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-code"></i> Current CSS
+                    </label>
+                    <div id="current-css" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.container {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-direction: row;<br>
+}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-info-circle"></i> Axis Information
+                    </label>
+                    <div id="axis-info" style="padding: 15px; background: white; border-radius: 8px; border: 2px solid var(--border);">
+                        <p style="margin: 0 0 10px 0; font-weight: 600; color: var(--danger);">Main Axis: Horizontal (→)</p>
+                        <p style="margin: 0; font-weight: 600; color: var(--success);">Cross Axis: Vertical (↓)</p>
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="applyDirection()">
+                        <i class="fas fa-play"></i> Apply Direction
+                    </button>
+                    <button onclick="resetDemo()" style="background: var(--danger);">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Notice:</strong> When you switch between row and column, the main and cross axes swap!
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-box" id="demo-container">
+                    <div class="demo-item">Item 1</div>
+                    <div class="demo-item">Item 2</div>
+                    <div class="demo-item">Item 3</div>
+                </div>
+                <div id="axis-visual" style="width: 300px; height: 30px; position: relative; margin-bottom: 10px;">
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--danger); transform: translateY(-50%);"></div>
+                    <div style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); color: var(--danger); font-weight: bold;">Main Axis →</div>
+                    <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); color: var(--success); font-weight: bold;">↑ Cross Axis</div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Red = Main Axis, Green = Cross Axis
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real world examples -->
+    <div class="real-world">
+        <div class="real-world-header">
+            <h3><i class="fas fa-globe"></i> Real-World Applications</h3>
+            <div style="color: var(--secondary); font-weight: 600;">
+                <i class="fas fa-rocket"></i> Practical Uses
+            </div>
+        </div>
+
+        <p>Here's how flex-direction is used in real websites:</p>
+
+        <div class="example-showcase">
+            <div class="showcase-item">
+                <div class="showcase-title">Navigation Menu (row)</div>
+                <p>Horizontal navigation with links side by side</p>
+                <div class="showcase-visual">
+                    <div class="nav-visual">
+                        <div class="direction-item" style="background: var(--primary);">Home</div>
+                        <div class="direction-item" style="background: var(--primary);">About</div>
+                        <div class="direction-item" style="background: var(--primary);">Services</div>
+                        <div class="direction-item" style="background: var(--primary);">Contact</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.navbar {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-direction: row;<br>
+&nbsp;&nbsp;gap: 20px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Sidebar Menu (column)</div>
+                <p>Vertical sidebar with stacked navigation items</p>
+                <div class="showcase-visual">
+                    <div class="sidebar-visual">
+                        <div class="direction-item" style="background: var(--success);">Dashboard</div>
+                        <div class="direction-item" style="background: var(--success);">Profile</div>
+                        <div class="direction-item" style="background: var(--success);">Settings</div>
+                        <div class="direction-item" style="background: var(--success);">Logout</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.sidebar {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-direction: column;<br>
+&nbsp;&nbsp;gap: 10px;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Reverse Timeline (column-reverse)</div>
+                <p>Chat messages or social media feeds (newest at bottom)</p>
+                <div class="showcase-visual">
+                    <div class="sidebar-visual" style="flex-direction: column-reverse;">
+                        <div class="direction-item" style="background: var(--warning);">New Message</div>
+                        <div class="direction-item" style="background: var(--warning);">Older Message</div>
+                        <div class="direction-item" style="background: var(--warning);">Oldest Message</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+.chat-feed {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;flex-direction: column-reverse;<br>
+}
+                </div>
+            </div>
+            
+            <div class="showcase-item">
+                <div class="showcase-title">Language Support (row-reverse)</div>
+                <p>Right-to-left layouts for Arabic or Hebrew</p>
+                <div class="showcase-visual">
+                    <div class="nav-visual" style="flex-direction: row-reverse;">
+                        <div class="direction-item" style="background: var(--secondary);">الصفحة الرئيسية</div>
+                        <div class="direction-item" style="background: var(--secondary);">من نحن</div>
+                        <div class="direction-item" style="background: var(--secondary);">اتصل بنا</div>
+                    </div>
+                </div>
+                <div class="showcase-item-code">
+[dir="rtl"] .navbar {<br>
+&nbsp;&nbsp;flex-direction: row-reverse;<br>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge: Mobile Layout</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Create a responsive layout that changes direction based on screen size.</p>
+                <ol>
+                    <li>Start with the horizontal layout (default row)</li>
+                    <li>Your goal: Switch to vertical layout (column) when needed</li>
+                    <li>This mimics how mobile sites stack elements vertically</li>
+                    <li>Test both layouts using the buttons below</li>
+                    <li>Extra credit: Try the reverse variations too!</li>
+                </ol>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-box">
+                    <div class="challenge-item">Header</div>
+                    <div class="challenge-item">Content</div>
+                    <div class="challenge-item">Sidebar</div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="setLayout('row')">
+                    <i class="fas fa-desktop"></i> Desktop (row)
+                </button>
+                
+                <button class="challenge-btn" onclick="setLayout('column')">
+                    <i class="fas fa-mobile-alt"></i> Mobile (column)
+                </button>
+                
+                <button class="challenge-btn" onclick="setLayout('row-reverse')">
+                    <i class="fas fa-exchange-alt"></i> Reverse Row
+                </button>
+                
+                <button class="challenge-btn" onclick="setLayout('column-reverse')">
+                    <i class="fas fa-sort-amount-down"></i> Reverse Column
+                </button>
+                
+                <button class="challenge-btn" onclick="showChallengeSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="challenge-solution" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* Responsive layout with media queries */
+.container {
+  display: flex;
+  flex-direction: row; /* Desktop: horizontal */
+  gap: 20px;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* Mobile: vertical */
+  }
+  
+  .item {
+    width: 100%; /* Full width on mobile */
+  }
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    ↔️
+                </div>
+                <div class="takeaway-content">
+                    <h4>Four Directions</h4>
+                    <p><code>row</code>, <code>row-reverse</code>, <code>column</code>, <code>column-reverse</code></p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📍
+                </div>
+                <div class="takeaway-content">
+                    <h4>Two Axes</h4>
+                    <p>Main axis (flow direction) and cross axis (perpendicular).</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🔄
+                </div>
+                <div class="takeaway-content">
+                    <h4>Axis Swap</h4>
+                    <p>Row = horizontal main, column = vertical main. Axes swap!</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📱
+                </div>
+                <div class="takeaway-content">
+                    <h4>Responsive Magic</h4>
+                    <p>Use column for mobile, row for desktop. Simple responsive layouts!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="./lesson1.1.html" class="nav-btn prev-btn">
+            <i class="fas fa-arrow-left"></i> Previous: Display & Flex Intro
+        </a>
+        <a href="./lesson1.3.html" class="nav-btn next-btn">
+            Next: Justify Content
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 1, Lesson 2 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: flex-direction, main vs cross axis, row/column variations
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> You can now control layout direction in flexbox!
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const directionSelect = document.getElementById('direction-select');
+        const demoContainer = document.getElementById('demo-container');
+        const currentCss = document.getElementById('current-css');
+        const axisInfo = document.getElementById('axis-info');
+        const axisVisual = document.getElementById('axis-visual');
+        const challengeBox = document.getElementById('challenge-box');
+        const challengeSolution = document.getElementById('challenge-solution');
+        const feedback = document.getElementById('feedback');
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            directionSelect.addEventListener('change', updateAxisInfo);
+            
+            // Set initial state
+            updateAxisInfo();
+        }
+
+        // Update axis information based on selected direction
+        function updateAxisInfo() {
+            const direction = directionSelect.value;
+            let mainAxis = '';
+            let crossAxis = '';
+            let cssCode = '';
+            
+            switch(direction) {
+                case 'row':
+                    mainAxis = 'Horizontal (→)';
+                    crossAxis = 'Vertical (↓)';
+                    cssCode = `.container {\n  display: flex;\n  flex-direction: row;\n}`;
+                    break;
+                    
+                case 'row-reverse':
+                    mainAxis = 'Horizontal (←)';
+                    crossAxis = 'Vertical (↓)';
+                    cssCode = `.container {\n  display: flex;\n  flex-direction: row-reverse;\n}`;
+                    break;
+                    
+                case 'column':
+                    mainAxis = 'Vertical (↓)';
+                    crossAxis = 'Horizontal (→)';
+                    cssCode = `.container {\n  display: flex;\n  flex-direction: column;\n}`;
+                    break;
+                    
+                case 'column-reverse':
+                    mainAxis = 'Vertical (↑)';
+                    crossAxis = 'Horizontal (→)';
+                    cssCode = `.container {\n  display: flex;\n  flex-direction: column-reverse;\n}`;
+                    break;
+            }
+            
+            // Update axis info display
+            axisInfo.innerHTML = `<p style="margin: 0 0 10px 0; font-weight: 600; color: var(--danger);">Main Axis: ${mainAxis}</p>
+                                 <p style="margin: 0; font-weight: 600; color: var(--success);">Cross Axis: ${crossAxis}</p>`;
+            
+            // Update CSS display
+            currentCss.textContent = cssCode;
+            
+            // Update axis visual
+            updateAxisVisual(direction);
+        }
+
+        // Update the axis visual
+        function updateAxisVisual(direction) {
+            const mainAxisLine = axisVisual.querySelector('div:nth-child(1)');
+            const mainAxisLabel = axisVisual.querySelector('div:nth-child(2)');
+            const crossAxisLabel = axisVisual.querySelector('div:nth-child(3)');
+            
+            switch(direction) {
+                case 'row':
+                    mainAxisLine.style.transform = 'translateY(-50%)';
+                    mainAxisLine.style.width = '100%';
+                    mainAxisLine.style.height = '3px';
+                    mainAxisLine.style.left = '0';
+                    mainAxisLine.style.top = '50%';
+                    mainAxisLabel.textContent = 'Main Axis →';
+                    mainAxisLabel.style.right = '10px';
+                    mainAxisLabel.style.top = '50%';
+                    mainAxisLabel.style.transform = 'translateY(-50%)';
+                    crossAxisLabel.textContent = '↑ Cross Axis';
+                    crossAxisLabel.style.top = '10px';
+                    crossAxisLabel.style.left = '50%';
+                    crossAxisLabel.style.transform = 'translateX(-50%)';
+                    break;
+                    
+                case 'row-reverse':
+                    mainAxisLabel.textContent = '← Main Axis';
+                    break;
+                    
+                case 'column':
+                    mainAxisLine.style.transform = 'translateX(-50%) rotate(90deg)';
+                    mainAxisLine.style.width = '100%';
+                    mainAxisLine.style.height = '3px';
+                    mainAxisLine.style.left = '50%';
+                    mainAxisLine.style.top = '50%';
+                    mainAxisLabel.textContent = '↓ Main Axis';
+                    mainAxisLabel.style.right = '50%';
+                    mainAxisLabel.style.top = '90%';
+                    mainAxisLabel.style.transform = 'translateX(50%)';
+                    crossAxisLabel.textContent = 'Cross Axis →';
+                    crossAxisLabel.style.top = '50%';
+                    crossAxisLabel.style.left = '90%';
+                    crossAxisLabel.style.transform = 'translateY(-50%)';
+                    break;
+                    
+                case 'column-reverse':
+                    mainAxisLabel.textContent = '↑ Main Axis';
+                    mainAxisLabel.style.top = '10%';
+                    break;
+            }
+        }
+
+        // Apply direction to demo
+        function applyDirection() {
+            const direction = directionSelect.value;
+            
+            // Apply to demo container
+            demoContainer.style.flexDirection = direction;
+            
+            // Add some spacing for column layouts
+            if (direction.includes('column')) {
+                demoContainer.style.gap = '10px';
+                demoContainer.style.justifyContent = 'flex-start';
+                demoContainer.style.alignItems = 'flex-start';
+            } else {
+                demoContainer.style.gap = '20px';
+                demoContainer.style.justifyContent = 'space-around';
+                demoContainer.style.alignItems = 'center';
+            }
+            
+            showFeedback(`Applied flex-direction: ${direction}`);
+        }
+
+        // Reset demo
+        function resetDemo() {
+            directionSelect.value = 'row';
+            demoContainer.style.flexDirection = 'row';
+            demoContainer.style.gap = '20px';
+            demoContainer.style.justifyContent = 'space-around';
+            demoContainer.style.alignItems = 'center';
+            
+            updateAxisInfo();
+            showFeedback('Reset to default (row)');
+        }
+
+        // Set layout for challenge
+        function setLayout(direction) {
+            challengeBox.style.flexDirection = direction;
+            
+            // Adjust spacing and sizing based on direction
+            if (direction.includes('column')) {
+                challengeBox.style.gap = '10px';
+                challengeBox.style.justifyContent = 'flex-start';
+                challengeBox.style.alignItems = 'stretch';
+                
+                // Make items full width in column layout
+                const items = challengeBox.querySelectorAll('.challenge-item');
+                items.forEach(item => {
+                    item.style.width = '100%';
+                    item.style.margin = '0';
+                });
+            } else {
+                challengeBox.style.gap = '15px';
+                challengeBox.style.justifyContent = 'space-around';
+                challengeBox.style.alignItems = 'center';
+                
+                // Reset item widths
+                const items = challengeBox.querySelectorAll('.challenge-item');
+                items.forEach(item => {
+                    item.style.width = '';
+                    item.style.margin = '5px';
+                });
+            }
+            
+            let layoutName = '';
+            switch(direction) {
+                case 'row': layoutName = 'Desktop (row)'; break;
+                case 'column': layoutName = 'Mobile (column)'; break;
+                case 'row-reverse': layoutName = 'Reverse Row'; break;
+                case 'column-reverse': layoutName = 'Reverse Column'; break;
+            }
+            
+            showFeedback(`Set layout to: ${layoutName}`);
+        }
+
+        // Show challenge solution
+        function showChallengeSolution() {
+            challengeSolution.style.display = 'block';
+            showFeedback('Showing responsive layout solution');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            challengeBox.style.flexDirection = 'row';
+            challengeBox.style.gap = '15px';
+            challengeBox.style.justifyContent = 'space-around';
+            challengeBox.style.alignItems = 'center';
+            
+            // Reset items
+            const items = challengeBox.querySelectorAll('.challenge-item');
+            items.forEach(item => {
+                item.style.width = '';
+                item.style.margin = '5px';
+            });
+            
+            challengeSolution.style.display = 'none';
+            showFeedback('Challenge reset to default');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

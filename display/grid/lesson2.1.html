@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 2.1 - Introducing CSS Grid: Rows and Columns</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Grid vs Flexbox */
+        .grid-flex-comparison {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .comparison-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .comparison-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .comparison-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .flex-visual {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+        }
+
+        .grid-visual {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            height: 100%;
+        }
+
+        .comparison-item {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Grid declaration */
+        .grid-declaration {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .declaration-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .declaration-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .declaration-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .declaration-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .declaration-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .declaration-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        /* Grid lines explanation */
+        .grid-lines {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .grid-lines-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .grid-lines-header h3 {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .grid-lines-visual {
+            height: 250px;
+            margin: 25px 0;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            display: grid;
+            grid-template-columns: 100px 100px 100px;
+            grid-template-rows: 80px 80px;
+            gap: 10px;
+            position: relative;
+        }
+
+        .grid-cell {
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .line-label {
+            position: absolute;
+            color: var(--danger);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .line-horizontal {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--danger);
+            opacity: 0.7;
+        }
+
+        .line-vertical {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: var(--danger);
+            opacity: 0.7;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-grid {
+            width: 400px;
+            height: 300px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            display: grid;
+        }
+
+        .demo-grid-item {
+            background: var(--secondary);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        select:focus, input:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 280px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-grid {
+            width: 400px;
+            height: 250px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+        }
+
+        .challenge-grid-item {
+            background: var(--warning);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-grid {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Highlight */
+        .highlight {
+            background: rgba(255, 242, 200, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .highlight strong {
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step completed">
+            <div class="step-number">M1</div>
+            <div class="step-label">Flexbox</div>
+        </div>
+        <div class="progress-step current">
+            <div class="step-number">2.1</div>
+            <div class="step-label">Grid Intro</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.2</div>
+            <div class="step-label">FR Unit</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.3</div>
+            <div class="step-label">Gaps & Alignment</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.4</div>
+            <div class="step-label">Placing Items</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.5</div>
+            <div class="step-label">Named Areas</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.6</div>
+            <div class="step-label">Auto-fit & Minmax</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>Introducing CSS Grid: Rows and Columns</h1>
+        <p class="lesson-goal">Create two-dimensional layouts by defining explicit rows and columns</p>
+        <div class="module-tag">
+            <i class="fas fa-th"></i> Module 2: CSS Grid Fundamentals • Lesson 1 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> From Flexbox to Grid: A New Dimension</h3>
+        <p>Congratulations on completing Module 1! You've mastered single-axis layouts with flexbox. Now, let's add a second dimension with CSS Grid.</p>
+        
+        <div class="review-content">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--primary);">
+                    <i class="fas fa-arrows-alt-h"></i>
+                </div>
+                <h4>Flexbox: 1D Layout</h4>
+                <p>Single axis (row OR column) with wrapping</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+.container {
+  display: flex;
+  flex-direction: row;
+}
+                </div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--secondary);">
+                    <i class="fas fa-th"></i>
+                </div>
+                <h4>CSS Grid: 2D Layout</h4>
+                <p>Both rows AND columns simultaneously</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+.container {
+  display: grid;
+  grid-template-columns: ...;
+  grid-template-rows: ...;
+}
+                </div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-expand-alt"></i>
+                </div>
+                <h4>New Power</h4>
+                <p>Precise control over both dimensions at once</p>
+                <p style="color: var(--success); font-weight: 600; margin-top: 10px;">
+                    <i class="fas fa-bolt"></i> Perfect for complex layouts
+                </p>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-chess-board"></i>
+                </div>
+                <h4>Grid Analogy</h4>
+                <p>Think spreadsheets, chessboards, or magazine layouts</p>
+                <p style="color: var(--warning); font-weight: 600; margin-top: 10px;">
+                    <i class="fas fa-check-circle"></i> Organized in rows AND columns
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-th-large"></i> Welcome to Two-Dimensional Layouts</h2>
+        
+        <div class="explanation">
+            <p><strong>CSS Grid</strong> is a layout system that allows you to create complex two-dimensional designs with both rows <em>and</em> columns. Unlike flexbox (which handles one axis at a time), grid lets you define the entire structure upfront.</p>
+            
+            <p>The magic happens when you declare <code>display: grid</code> on a container. This single property transforms all direct children into <strong>grid items</strong> that can be placed anywhere within the grid you define.</p>
+        </div>
+
+        <div class="analogy">
+            <strong>🏗️ Construction Blueprint Analogy</strong>
+            <p>Imagine building a house:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Flexbox:</strong> Like arranging furniture along a single wall (one dimension)</li>
+                <li><strong>Grid:</strong> Like drawing the entire house blueprint with rooms laid out in rows and columns (two dimensions)</li>
+                <li><strong>grid-template-columns:</strong> Defines how many rooms per row and their widths</li>
+                <li><strong>grid-template-rows:</strong> Defines how many rooms per column and their heights</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <p><strong>💡 The Grid Mindset:</strong> With CSS Grid, you define the <em>structure first</em> (rows and columns), then place items within that structure. This is opposite to flexbox where items dictate the layout. Grid gives you precision control over the entire layout from the start.</p>
+        </div>
+    </div>
+
+    <!-- Grid vs Flexbox -->
+    <div class="grid-flex-comparison">
+        <div class="comparison-header">
+            <h3><i class="fas fa-balance-scale"></i> Grid vs Flexbox: Understanding the Difference</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-exchange-alt"></i> 1D vs 2D
+            </div>
+        </div>
+
+        <p>Here's the fundamental difference between these two powerful layout systems:</p>
+
+        <div class="comparison-container">
+            <div class="comparison-box">
+                <div class="comparison-title" style="color: var(--primary);">
+                    <i class="fas fa-arrows-alt-h"></i> Flexbox (1D)
+                </div>
+                <p><strong>Single-axis layout</strong> - items flow in one direction (row OR column)</p>
+                <div class="comparison-visual">
+                    <div class="flex-visual">
+                        <div class="comparison-item">1</div>
+                        <div class="comparison-item">2</div>
+                        <div class="comparison-item">3</div>
+                        <div class="comparison-item">4</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {
+  display: flex;
+  flex-direction: row;
+  <span class="code-comment">/* OR column */</span>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <strong>Best for:</strong> Navigation bars, card lists, centering items
+                </p>
+            </div>
+
+            <div class="comparison-box">
+                <div class="comparison-title" style="color: var(--secondary);">
+                    <i class="fas fa-th"></i> CSS Grid (2D)
+                </div>
+                <p><strong>Two-dimensional layout</strong> - items placed in rows AND columns</p>
+                <div class="comparison-visual">
+                    <div class="grid-visual">
+                        <div class="comparison-item">1</div>
+                        <div class="comparison-item">2</div>
+                        <div class="comparison-item">3</div>
+                        <div class="comparison-item">4</div>
+                        <div class="comparison-item">5</div>
+                        <div class="comparison-item">6</div>
+                    </div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <strong>Best for:</strong> Page layouts, dashboards, galleries, forms
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Simple Rule:</strong> Use <strong>Flexbox</strong> for components (navigation, cards). Use <strong>Grid</strong> for overall page structure (headers, sidebars, footers).
+            </p>
+        </div>
+    </div>
+
+    <!-- Grid declaration -->
+    <div class="grid-declaration">
+        <div class="declaration-header">
+            <h3><i class="fas fa-code"></i> The Grid Declaration Syntax</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-magic"></i> Creating Grids
+            </div>
+        </div>
+        
+        <p>Creating a CSS Grid starts with three essential properties:</p>
+
+        <div class="declaration-content">
+            <div class="declaration-box">
+                <div class="declaration-title">1. Activate Grid</div>
+                <p>The foundation property that enables grid layout</p>
+                <div class="syntax-code">
+<span class="code-selector">.container</span> {
+  <span class="code-property">display</span>: <span class="code-value">grid</span>;
+  <span class="code-comment">/* or inline-grid */</span>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-check-circle"></i> This alone creates a 1x1 grid (one column, one row)
+                </p>
+            </div>
+            
+            <div class="declaration-box">
+                <div class="declaration-title">2. Define Columns</div>
+                <p>Set up your column structure</p>
+                <div class="syntax-code">
+<span class="code-selector">.container</span> {
+  <span class="code-property">grid-template-columns</span>: <span class="code-value">200px 200px 200px</span>;
+  <span class="code-comment">/* Three columns, each 200px wide */</span>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-check-circle"></i> Each value = one column width
+                </p>
+            </div>
+            
+            <div class="declaration-box">
+                <div class="declaration-title">3. Define Rows</div>
+                <p>Set up your row structure (optional)</p>
+                <div class="syntax-code">
+<span class="code-selector">.container</span> {
+  <span class="code-property">grid-template-rows</span>: <span class="code-value">100px 100px</span>;
+  <span class="code-comment">/* Two rows, each 100px tall */</span>
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-check-circle"></i> If omitted, rows are created automatically
+                </p>
+            </div>
+            
+            <div class="declaration-box">
+                <div class="declaration-title">Complete Example</div>
+                <p>A 3×2 grid with fixed dimensions</p>
+                <div class="syntax-code">
+<span class="code-selector">.container</span> {
+  <span class="code-property">display</span>: <span class="code-value">grid</span>;
+  <span class="code-property">grid-template-columns</span>: <span class="code-value">150px 150px 150px</span>;
+  <span class="code-property">grid-template-rows</span>: <span class="code-value">80px 80px</span>;
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-th"></i> Creates a perfect 3-column, 2-row grid
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid lines explanation -->
+    <div class="grid-lines">
+        <div class="grid-lines-header">
+            <h3><i class="fas fa-border-style"></i> Understanding Grid Lines</h3>
+            <div style="color: var(--secondary); font-weight: 600;">
+                <i class="fas fa-ruler"></i> The Coordinate System
+            </div>
+        </div>
+        
+        <p>CSS Grid uses an invisible coordinate system of <strong>grid lines</strong> to position items. Each line is numbered starting from 1:</p>
+
+        <div class="grid-lines-visual">
+            <!-- Grid lines -->
+            <div class="line-vertical" style="left: 0;"></div>
+            <div class="line-vertical" style="left: 110px;"></div>
+            <div class="line-vertical" style="left: 220px;"></div>
+            <div class="line-vertical" style="left: 330px;"></div>
+            
+            <div class="line-horizontal" style="top: 0;"></div>
+            <div class="line-horizontal" style="top: 90px;"></div>
+            <div class="line-horizontal" style="top: 180px;"></div>
+            
+            <!-- Line labels -->
+            <div class="line-label" style="top: -25px; left: 5px;">Column 1</div>
+            <div class="line-label" style="top: -25px; left: 115px;">Column 2</div>
+            <div class="line-label" style="top: -25px; left: 225px;">Column 3</div>
+            
+            <div class="line-label" style="left: -50px; top: 40px;">Row 1</div>
+            <div class="line-label" style="left: -50px; top: 130px;">Row 2</div>
+            
+            <!-- Grid cells -->
+            <div class="grid-cell">A1</div>
+            <div class="grid-cell">B1</div>
+            <div class="grid-cell">C1</div>
+            <div class="grid-cell">A2</div>
+            <div class="grid-cell">B2</div>
+            <div class="grid-cell">C2</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px;">
+            <div style="background: white; padding: 20px; border-radius: 10px;">
+                <h4 style="color: var(--primary); margin-bottom: 10px;">Column Lines</h4>
+                <p>Vertical lines that separate columns. A 3-column grid has <strong>4 column lines</strong> (1 before, 1 between each column, 1 after).</p>
+                <div class="syntax-code" style="font-size: 0.9rem; margin-top: 10px;">
+<span class="code-comment">/* 3 columns = 4 column lines */</span>
+grid-template-columns: 100px 100px 100px;
+<span class="code-comment">// Line 1    Line 2    Line 3    Line 4</span>
+                </div>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 10px;">
+                <h4 style="color: var(--primary); margin-bottom: 10px;">Row Lines</h4>
+                <p>Horizontal lines that separate rows. A 2-row grid has <strong>3 row lines</strong> (1 before, 1 between rows, 1 after).</p>
+                <div class="syntax-code" style="font-size: 0.9rem; margin-top: 10px;">
+<span class="code-comment">/* 2 rows = 3 row lines */</span>
+grid-template-rows: 100px 100px;
+<span class="code-comment">// Line 1    Line 2    Line 3</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--secondary);">
+                <i class="fas fa-map"></i>
+                <strong>Grid Lines are Your Coordinates:</strong> You'll use these line numbers to place items anywhere in the grid (e.g., "start at column line 2, end at column line 4").
+            </p>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> Interactive Grid Builder</h3>
+            <div style="color: var(--primary); font-weight: 600;">
+                <i class="fas fa-gamepad"></i> Build Your First Grid
+            </div>
+        </div>
+
+        <p>Create your first CSS Grid by defining columns and rows. Watch the structure appear in real-time!</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="columns-input">
+                        <i class="fas fa-columns"></i> Number of Columns: 
+                        <span id="columns-value" class="value-display">3</span>
+                    </label>
+                    <input type="range" id="columns-input" min="1" max="6" step="1" value="3">
+                </div>
+
+                <div class="control-group">
+                    <label for="column-width">
+                        <i class="fas fa-arrows-alt-h"></i> Column Width: 
+                        <span id="column-width-value" class="value-display">100px</span>
+                    </label>
+                    <input type="range" id="column-width" min="50" max="200" step="10" value="100">
+                </div>
+
+                <div class="control-group">
+                    <label for="rows-input">
+                        <i class="fas fa-stream"></i> Number of Rows: 
+                        <span id="rows-value" class="value-display">2</span>
+                    </label>
+                    <input type="range" id="rows-input" min="1" max="6" step="1" value="2">
+                </div>
+
+                <div class="control-group">
+                    <label for="row-height">
+                        <i class="fas fa-arrows-alt-v"></i> Row Height: 
+                        <span id="row-height-value" class="value-display">80px</span>
+                    </label>
+                    <input type="range" id="row-height" min="50" max="200" step="10" value="80">
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-code"></i> Generated CSS
+                    </label>
+                    <div id="generated-css" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.container {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 80px 80px;
+}
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="applyGridSettings()">
+                        <i class="fas fa-play"></i> Apply Grid
+                    </button>
+                    <button onclick="resetGridDemo()" style="background: var(--danger);">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Try This:</strong> Create a 4×3 grid with 120px columns and 100px rows. Watch how the grid structure forms!
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-grid" id="grid-container">
+                    <div class="demo-grid-item">1</div>
+                    <div class="demo-grid-item">2</div>
+                    <div class="demo-grid-item">3</div>
+                    <div class="demo-grid-item">4</div>
+                    <div class="demo-grid-item">5</div>
+                    <div class="demo-grid-item">6</div>
+                </div>
+                <div style="width: 100%; text-align: center;">
+                    <div style="display: inline-block; padding: 8px 20px; background: var(--primary); color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                        <i class="fas fa-eye"></i> Your Grid Structure
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Items automatically fill the grid cells in order
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge: Create a Photo Gallery Grid</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Create a 3×3 photo gallery grid with equal-sized cells.</p>
+                <ol>
+                    <li>Start with the container element below</li>
+                    <li>Make it a CSS Grid container</li>
+                    <li>Create 3 columns, each 120px wide</li>
+                    <li>Create 3 rows, each 120px tall</li>
+                    <li>Make sure all 9 photos fit perfectly in the grid</li>
+                    <li>Extra credit: Add a 10px gap between photos</li>
+                </ol>
+                <p><strong>Hint:</strong> You'll need <code>display: grid</code>, <code>grid-template-columns</code>, and <code>grid-template-rows</code>!</p>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-grid">
+                    <div class="challenge-grid-item">📷 1</div>
+                    <div class="challenge-grid-item">📷 2</div>
+                    <div class="challenge-grid-item">📷 3</div>
+                    <div class="challenge-grid-item">📷 4</div>
+                    <div class="challenge-grid-item">📷 5</div>
+                    <div class="challenge-grid-item">📷 6</div>
+                    <div class="challenge-grid-item">📷 7</div>
+                    <div class="challenge-grid-item">📷 8</div>
+                    <div class="challenge-grid-item">📷 9</div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="applyChallengeStep('grid')">
+                    <i class="fas fa-wrench"></i> Enable Grid
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('columns')">
+                    <i class="fas fa-wrench"></i> Add Columns
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('rows')">
+                    <i class="fas fa-wrench"></i> Add Rows
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('all')">
+                    <i class="fas fa-wrench"></i> Complete Grid
+                </button>
+                
+                <button class="challenge-btn" onclick="showChallengeSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="challenge-solution" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* Complete 3×3 grid gallery solution */
+.gallery {
+  display: grid; /* Activate CSS Grid */
+  
+  /* Create 3 equal columns */
+  grid-template-columns: 120px 120px 120px;
+  
+  /* Create 3 equal rows */
+  grid-template-rows: 120px 120px 120px;
+  
+  /* Add spacing between photos (extra credit) */
+  gap: 10px;
+}
+
+/* Alternative: Using repeat() for cleaner code */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  grid-template-rows: repeat(3, 120px);
+  gap: 10px;
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🌀
+                </div>
+                <div class="takeaway-content">
+                    <h4>display: grid</h4>
+                    <p>The foundation property that enables CSS Grid layout on a container.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📐
+                </div>
+                <div class="takeaway-content">
+                    <h4>grid-template-columns</h4>
+                    <p>Defines the number and width of columns. Each value = one column.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📏
+                </div>
+                <div class="takeaway-content">
+                    <h4>grid-template-rows</h4>
+                    <p>Defines the number and height of rows. Each value = one row.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🗺️
+                </div>
+                <div class="takeaway-content">
+                    <h4>Grid Lines</h4>
+                    <p>Invisible coordinate system (numbered lines) used to position items.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="../flex/lesson1.6.html" class="nav-btn prev-btn">
+            <i class="fas fa-arrow-left"></i> Previous: Flex Wrap & Gap
+        </a>
+        <a href="./lesson2.2.html" class="nav-btn next-btn">
+            Next: The FR Unit and Flexible Grids
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 2, Lesson 1 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: display: grid, grid-template-columns, grid-template-rows, grid lines
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> Great start! You've created your first CSS Grid layout.
+        </p>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: var(--secondary);">
+            <i class="fas fa-arrow-right"></i> Next: Learn about the powerful <code>fr</code> unit for flexible grids
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const columnsInput = document.getElementById('columns-input');
+        const columnsValue = document.getElementById('columns-value');
+        const columnWidth = document.getElementById('column-width');
+        const columnWidthValue = document.getElementById('column-width-value');
+        const rowsInput = document.getElementById('rows-input');
+        const rowsValue = document.getElementById('rows-value');
+        const rowHeight = document.getElementById('row-height');
+        const rowHeightValue = document.getElementById('row-height-value');
+        const gridContainer = document.getElementById('grid-container');
+        const generatedCss = document.getElementById('generated-css');
+        const challengeGrid = document.getElementById('challenge-grid');
+        const challengeSolution = document.getElementById('challenge-solution');
+        const feedback = document.getElementById('feedback');
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            columnsInput.addEventListener('input', updateColumns);
+            columnWidth.addEventListener('input', updateColumnWidth);
+            rowsInput.addEventListener('input', updateRows);
+            rowHeight.addEventListener('input', updateRowHeight);
+            
+            // Set initial state
+            updateColumns();
+            updateColumnWidth();
+            updateRows();
+            updateRowHeight();
+            updateGeneratedCss();
+            applyGridSettings();
+        }
+
+        // Update columns display
+        function updateColumns() {
+            const columns = parseInt(columnsInput.value);
+            columnsValue.textContent = columns;
+            updateGeneratedCss();
+        }
+
+        // Update column width display
+        function updateColumnWidth() {
+            const width = parseInt(columnWidth.value);
+            columnWidthValue.textContent = `${width}px`;
+            updateGeneratedCss();
+        }
+
+        // Update rows display
+        function updateRows() {
+            const rows = parseInt(rowsInput.value);
+            rowsValue.textContent = rows;
+            updateGeneratedCss();
+        }
+
+        // Update row height display
+        function updateRowHeight() {
+            const height = parseInt(rowHeight.value);
+            rowHeightValue.textContent = `${height}px`;
+            updateGeneratedCss();
+        }
+
+        // Update generated CSS
+        function updateGeneratedCss() {
+            const columns = parseInt(columnsInput.value);
+            const colWidth = parseInt(columnWidth.value);
+            const rows = parseInt(rowsInput.value);
+            const rowHt = parseInt(rowHeight.value);
+            
+            // Create column and row definitions
+            const colDef = Array(columns).fill(`${colWidth}px`).join(' ');
+            const rowDef = Array(rows).fill(`${rowHt}px`).join(' ');
+            
+            // Update CSS display
+            generatedCss.textContent = `.container {\n  display: grid;\n  grid-template-columns: ${colDef};\n  grid-template-rows: ${rowDef};\n}`;
+        }
+
+        // Apply grid settings to demo
+        function applyGridSettings() {
+            const columns = parseInt(columnsInput.value);
+            const colWidth = parseInt(columnWidth.value);
+            const rows = parseInt(rowsInput.value);
+            const rowHt = parseInt(rowHeight.value);
+            
+            // Apply to grid container
+            gridContainer.style.display = 'grid';
+            gridContainer.style.gridTemplateColumns = Array(columns).fill(`${colWidth}px`).join(' ');
+            gridContainer.style.gridTemplateRows = Array(rows).fill(`${rowHt}px`).join(' ');
+            gridContainer.style.gap = '10px';
+            
+            // Create or remove items as needed
+            const totalItems = columns * rows;
+            const currentItems = gridContainer.children.length;
+            
+            // Add items if needed
+            if (currentItems < totalItems) {
+                for (let i = currentItems + 1; i <= totalItems; i++) {
+                    const item = document.createElement('div');
+                    item.className = 'demo-grid-item';
+                    item.textContent = i;
+                    gridContainer.appendChild(item);
+                }
+            }
+            // Remove items if needed
+            else if (currentItems > totalItems) {
+                for (let i = currentItems; i > totalItems; i--) {
+                    gridContainer.removeChild(gridContainer.lastChild);
+                }
+            }
+            
+            // Update item numbers
+            const items = gridContainer.querySelectorAll('.demo-grid-item');
+            items.forEach((item, index) => {
+                item.textContent = index + 1;
+            });
+            
+            showFeedback(`Created ${columns}×${rows} grid with ${colWidth}px columns and ${rowHt}px rows`);
+        }
+
+        // Reset grid demo
+        function resetGridDemo() {
+            columnsInput.value = '3';
+            columnWidth.value = '100';
+            rowsInput.value = '2';
+            rowHeight.value = '80';
+            
+            updateColumns();
+            updateColumnWidth();
+            updateRows();
+            updateRowHeight();
+            applyGridSettings();
+            showFeedback('Reset to default 3×2 grid');
+        }
+
+        // Apply challenge step
+        function applyChallengeStep(step) {
+            if (step === 'grid' || step === 'all') {
+                challengeGrid.style.display = 'grid';
+            }
+            
+            if (step === 'columns' || step === 'all') {
+                challengeGrid.style.gridTemplateColumns = '120px 120px 120px';
+            }
+            
+            if (step === 'rows' || step === 'all') {
+                challengeGrid.style.gridTemplateRows = '120px 120px 120px';
+            }
+            
+            if (step === 'all') {
+                challengeGrid.style.gap = '10px';
+            }
+            
+            if (step === 'grid') {
+                showFeedback('Grid activated! Items are now in a single column');
+            } else if (step === 'columns') {
+                showFeedback('3 columns added! Items now flow horizontally');
+            } else if (step === 'rows') {
+                showFeedback('3 rows defined! Grid now has proper structure');
+            } else if (step === 'all') {
+                showFeedback('Perfect! 3×3 photo gallery grid complete');
+            }
+        }
+
+        // Show challenge solution
+        function showChallengeSolution() {
+            // Show the solution
+            challengeSolution.style.display = 'block';
+            
+            // Apply the solution
+            applyChallengeStep('all');
+            
+            showFeedback('Applied complete 3×3 grid solution');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            // Reset to original
+            challengeGrid.style.display = '';
+            challengeGrid.style.gridTemplateColumns = '';
+            challengeGrid.style.gridTemplateRows = '';
+            challengeGrid.style.gap = '';
+            
+            challengeSolution.style.display = 'none';
+            showFeedback('Challenge reset to original');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

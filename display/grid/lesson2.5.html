@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display: Lesson 2.5 - Named Grid Areas (Visual Layouts)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--border);
+            color: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .current .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .current .step-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Lesson header */
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .lesson-goal {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Review section */
+        .review {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .review h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .review-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+
+        /* Concept explanation */
+        .concept {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .concept h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .analogy {
+            background: rgba(255, 242, 200, 0.5);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .analogy strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* The Problem with Line Numbers */
+        .problem-section {
+            background: rgba(8, 145, 178, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .problem-header h3 {
+            color: var(--info);
+            margin: 0;
+        }
+
+        .problem-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .problem-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .problem-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .problem-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .problem-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: grid;
+        }
+
+        .problem-item {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Named Areas Explanation */
+        .named-areas {
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+
+        .named-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .named-header h3 {
+            color: var(--success);
+            margin: 0;
+        }
+
+        .named-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        .named-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .named-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .named-visual {
+            height: 200px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-rows: auto 1fr auto;
+            gap: 5px;
+        }
+
+        .named-area-item {
+            background: var(--secondary);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Syntax Code */
+        .syntax-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #7dd3fc;
+        }
+
+        .code-value {
+            color: #f0abfc;
+        }
+
+        .code-property {
+            color: #86efac;
+        }
+
+        .code-selector {
+            color: #fbbf24;
+        }
+
+        .code-string {
+            color: #fda4af;
+        }
+
+        /* Template Areas Examples */
+        .template-examples {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .examples-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .examples-header h3 {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .example-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .example-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .example-visual {
+            height: 200px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: grid;
+        }
+
+        /* Real World Layouts */
+        .real-world {
+            background: rgba(217, 119, 6, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--warning);
+        }
+
+        .real-world-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .real-world-header h3 {
+            color: var(--warning);
+            margin: 0;
+        }
+
+        .real-world-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .layout-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .layout-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .layout-visual {
+            height: 180px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            display: grid;
+        }
+
+        /* Interactive demo */
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--primary);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-header h3 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-controls {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .demo-preview {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-grid {
+            width: 400px;
+            height: 300px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            display: grid;
+        }
+
+        .demo-area-item {
+            background: var(--secondary);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        textarea, select, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        textarea {
+            height: 150px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+
+        select:focus, textarea:focus, button:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Practice challenge */
+        .practice {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px dashed var(--border);
+        }
+
+        .practice h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .challenge {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-instructions {
+            margin-bottom: 25px;
+        }
+
+        .challenge-instructions ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .challenge-instructions li {
+            margin-bottom: 10px;
+        }
+
+        .challenge-visual {
+            height: 320px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #challenge-grid {
+            width: 400px;
+            height: 300px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            display: grid;
+        }
+
+        .challenge-area-item {
+            background: var(--warning);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Key takeaways */
+        .takeaways {
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .takeaways h3 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content {
+            flex: 1;
+        }
+
+        .takeaway-content h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .takeaway-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .prev-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Lesson info */
+        .lesson-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        .concepts-learned {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .lesson-header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-grid, #challenge-grid {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .challenge-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .challenge-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Highlight */
+        .highlight {
+            background: rgba(255, 242, 200, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .highlight strong {
+            color: var(--warning);
+        }
+        
+        .area-visualization {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid var(--border);
+        }
+        
+        .area-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .area-name {
+            background: var(--info);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .area-explanation {
+            margin-left: 15px;
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress indicator -->
+    <div class="progress">
+        <div class="progress-line"></div>
+        <div class="progress-step completed">
+            <div class="step-number">2.1</div>
+            <div class="step-label">Grid Intro</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">2.2</div>
+            <div class="step-label">FR Unit</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">2.3</div>
+            <div class="step-label">Gaps & Alignment</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="step-number">2.4</div>
+            <div class="step-label">Placing Items</div>
+        </div>
+        <div class="progress-step current">
+            <div class="step-number">2.5</div>
+            <div class="step-label">Named Areas</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2.6</div>
+            <div class="step-label">Auto-fit & Minmax</div>
+        </div>
+    </div>
+
+    <!-- Lesson header -->
+    <div class="lesson-header">
+        <h1>Named Grid Areas (Visual Layouts)</h1>
+        <p class="lesson-goal">Create readable, visual layouts with named grid areas</p>
+        <div class="module-tag">
+            <i class="fas fa-th"></i> Module 2: CSS Grid Fundamentals • Lesson 5 of 6
+        </div>
+    </div>
+
+    <!-- Review section -->
+    <div class="review">
+        <h3><i class="fas fa-history"></i> Quick Review: Line-based Placement</h3>
+        <p>In Lesson 2.4, you learned to place items using grid line numbers. But what if we could use readable names instead?</p>
+        
+        <div class="review-content">
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--primary);">
+                    <i class="fas fa-map"></i>
+                </div>
+                <h4>Line Numbers</h4>
+                <p>Precise but hard to read and maintain</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+.header {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+                </div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--warning);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h4>The Problem</h4>
+                <p>Hard to visualize layout from code alone</p>
+                <div style="margin: 10px 0; padding: 10px; background: #fee2e2; border-radius: 5px; color: var(--danger);">
+                    <i class="fas fa-times-circle"></i> Code doesn't show visual structure
+                </div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--info);">
+                    <i class="fas fa-font"></i>
+                </div>
+                <h4>Readable Names</h4>
+                <p>Use words instead of numbers for clarity</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+.header {
+  grid-area: header;
+}
+                </div>
+            </div>
+            
+            <div class="review-item">
+                <div class="review-icon" style="background: var(--success);">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h4>Visual Layouts</h4>
+                <p>See your layout right in your CSS code!</p>
+                <div class="syntax-code" style="font-size: 0.8rem; margin: 10px 0;">
+grid-template-areas:
+  "header header header"
+  "sidebar main main"
+  "footer footer footer";
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concept explanation -->
+    <div class="concept">
+        <h2><i class="fas fa-eye"></i> Visual Layout Design with Named Areas</h2>
+        
+        <div class="explanation">
+            <p><strong>Named grid areas</strong> transform CSS Grid from a mathematical layout system into a visual design tool. Instead of positioning items with line numbers, you give areas meaningful names and arrange them visually in your CSS.</p>
+            
+            <p>The magic happens with <code>grid-template-areas</code>: you literally draw your layout using ASCII art in your CSS! Each row is a string, and each column is a word representing an area name. This makes your CSS self-documenting and incredibly easy to modify.</p>
+        </div>
+
+        <div class="analogy">
+            <strong>🏠 Floor Plan Analogy</strong>
+            <p>Imagine designing a house floor plan:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Line numbers:</strong> "Put the kitchen between walls 2 and 4, floors 1 and 3" - confusing!</li>
+                <li><strong>Named areas:</strong> Draw the floor plan with labeled rooms: "kitchen", "living room", "bedroom"</li>
+                <li><strong>grid-template-areas:</strong> Like sketching the floor plan on graph paper with room labels</li>
+                <li><strong>grid-area:</strong> Assigning furniture to specific rooms by name</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <p><strong>💡 The Visual Advantage:</strong> With named areas, you can look at your CSS and immediately understand the layout structure. No more mental math converting line numbers to visual positions. Plus, rearranging your layout is as simple as moving words around in your ASCII grid!</p>
+        </div>
+    </div>
+
+    <!-- The Problem with Line Numbers -->
+    <div class="problem-section">
+        <div class="problem-header">
+            <h3><i class="fas fa-exclamation-circle"></i> The Problem with Line Numbers</h3>
+            <div style="color: var(--info); font-weight: 600;">
+                <i class="fas fa-question-circle"></i> Readability Issues
+            </div>
+        </div>
+
+        <p>Line-based placement works, but it has significant readability and maintenance challenges:</p>
+
+        <div class="problem-container">
+            <div class="problem-box">
+                <div class="problem-title" style="color: var(--danger);">
+                    <i class="fas fa-times-circle"></i> Line Numbers (Hard to Read)
+                </div>
+                <p>Trying to understand this layout requires mental visualization</p>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: auto 1fr auto;
+}
+
+.header {
+  grid-column: 1 / 4;
+  grid-row: 1;
+}
+
+.sidebar {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.main {
+  grid-column: 2 / 4;
+  grid-row: 2;
+}
+
+.footer {
+  grid-column: 1 / 4;
+  grid-row: 3;
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-exclamation-triangle"></i> Problem: Can you quickly visualize this layout?
+                </p>
+            </div>
+
+            <div class="problem-box">
+                <div class="problem-title" style="color: var(--success);">
+                    <i class="fas fa-check-circle"></i> Named Areas (Visual & Clear)
+                </div>
+                <p>The layout is visually apparent right in the code</p>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header header header"
+    "sidebar main main"
+    "footer footer footer";
+}
+
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main { grid-area: main; }
+.footer { grid-area: footer; }
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-check-circle"></i> Solution: Layout is visually obvious!
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+            <p style="margin: 0; font-weight: 600; color: var(--info);">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Maintenance Advantage:</strong> With named areas, changing your layout is as simple as rearranging words. Want to move the sidebar to the right? Just change <code>"sidebar main main"</code> to <code>"main main sidebar"</code>!
+            </p>
+        </div>
+    </div>
+
+    <!-- Named Areas Explanation -->
+    <div class="named-areas">
+        <div class="named-header">
+            <h3><i class="fas fa-font"></i> How Named Areas Work</h3>
+            <div style="color: var(--success); font-weight: 600;">
+                <i class="fas fa-puzzle-piece"></i> Two-Step Process
+            </div>
+        </div>
+        
+        <p>Named areas work in two simple steps:</p>
+
+        <div class="named-content">
+            <div class="named-box">
+                <div class="named-title">1. Define the Template</div>
+                <p>Use <code>grid-template-areas</code> to create a visual grid map</p>
+                <div class="named-visual">
+                    <div class="named-area-item" style="grid-area: 1 / 1 / 2 / 4; background: var(--primary);">header</div>
+                    <div class="named-area-item" style="grid-area: 2 / 1 / 3 / 2; background: var(--success);">sidebar</div>
+                    <div class="named-area-item" style="grid-area: 2 / 2 / 3 / 4; background: var(--warning);">main</div>
+                    <div class="named-area-item" style="grid-area: 3 / 1 / 4 / 4; background: var(--info);">footer</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header header header"
+    "sidebar main main"
+    "footer footer footer";
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-draw-polygon"></i> Each string = one row, each word = one cell
+                </p>
+            </div>
+            
+            <div class="named-box">
+                <div class="named-title">2. Assign Items to Areas</div>
+                <p>Use <code>grid-area</code> to place items in named areas</p>
+                <div class="named-visual">
+                    <div class="named-area-item" style="background: var(--primary);">Header</div>
+                    <div class="named-area-item" style="background: var(--success);">Sidebar</div>
+                    <div class="named-area-item" style="background: var(--warning);">Main Content</div>
+                    <div class="named-area-item" style="background: var(--info);">Footer</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+.header {
+  grid-area: header;
+}
+
+.sidebar {
+  grid-area: sidebar;
+}
+
+.main {
+  grid-area: main;
+}
+
+.footer {
+  grid-area: footer;
+}
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
+                    <i class="fas fa-map-marker-alt"></i> Items automatically fill their named areas
+                </p>
+            </div>
+        </div>
+
+        <div class="area-visualization">
+            <h4 style="color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-info-circle"></i> Understanding the Template Syntax
+            </h4>
+            
+            <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-areas:
+  "header  header  header"   <span class="code-comment">/* Row 1: header spans all 3 columns */</span>
+  "sidebar main    main"     <span class="code-comment">/* Row 2: sidebar in col1, main in cols 2-3 */</span>
+  "footer  footer  footer";  <span class="code-comment">/* Row 3: footer spans all 3 columns */</span>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <div class="area-row">
+                    <div class="area-name">Repeated Names</div>
+                    <div class="area-explanation">Same name in multiple cells = item spans those cells</div>
+                </div>
+                <div class="area-row">
+                    <div class="area-name">Period (.)</div>
+                    <div class="area-explanation">Empty cell (no item assigned to that area)</div>
+                </div>
+                <div class="area-row">
+                    <div class="area-name">Quotes</div>
+                    <div class="area-explanation">Each row must be in quotes, separated by spaces or newlines</div>
+                </div>
+                <div class="area-row">
+                    <div class="area-name">Same Length</div>
+                    <div class="area-explanation">Each row must have the same number of columns</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Areas Examples -->
+    <div class="template-examples">
+        <div class="examples-header">
+            <h3><i class="fas fa-shapes"></i> Common Layout Patterns</h3>
+            <div style="color: var(--secondary); font-weight: 600;">
+                <i class="fas fa-th-large"></i> Area Templates
+            </div>
+        </div>
+        
+        <p>Different <code>grid-template-areas</code> patterns create different layouts:</p>
+
+        <div class="examples-grid">
+            <div class="example-demo">
+                <div class="example-title">Classic Website</div>
+                <p>Header, sidebar, main content, footer</p>
+                <div class="example-visual" style="grid-template-columns: 1fr 3fr; grid-template-rows: auto 1fr auto; grid-template-areas: 'header header' 'sidebar main' 'footer footer'; gap: 5px;">
+                    <div class="named-area-item" style="grid-area: header; background: var(--primary);">Header</div>
+                    <div class="named-area-item" style="grid-area: sidebar; background: var(--success);">Sidebar</div>
+                    <div class="named-area-item" style="grid-area: main; background: var(--warning);">Main</div>
+                    <div class="named-area-item" style="grid-area: footer; background: var(--info);">Footer</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-areas:
+  "header header"
+  "sidebar main"
+  "footer footer";
+                </div>
+            </div>
+            
+            <div class="example-demo">
+                <div class="example-title">Centered Hero</div>
+                <p>Full-width header, centered content area</p>
+                <div class="example-visual" style="grid-template-columns: 1fr 2fr 1fr; grid-template-rows: auto 1fr auto; grid-template-areas: 'header header header' '. hero .' 'footer footer footer'; gap: 5px;">
+                    <div class="named-area-item" style="grid-area: header; background: var(--primary);">Header</div>
+                    <div class="named-area-item" style="grid-area: hero; background: var(--success);">Hero</div>
+                    <div class="named-area-item" style="grid-area: footer; background: var(--info);">Footer</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-areas:
+  "header header header"
+  ". hero ."
+  "footer footer footer";
+                </div>
+            </div>
+            
+            <div class="example-demo">
+                <div class="example-title">Masonry Grid</div>
+                <p>Irregular grid with overlapping areas</p>
+                <div class="example-visual" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); grid-template-areas: 'big big side' 'big big .' 'bottom bottom bottom'; gap: 5px;">
+                    <div class="named-area-item" style="grid-area: big; background: var(--primary);">Big</div>
+                    <div class="named-area-item" style="grid-area: side; background: var(--success);">Side</div>
+                    <div class="named-area-item" style="grid-area: bottom; background: var(--warning);">Bottom</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-areas:
+  "big big side"
+  "big big ."
+  "bottom bottom bottom";
+                </div>
+            </div>
+            
+            <div class="example-demo">
+                <div class="example-title">Card Layout</div>
+                <p>Equal cards with empty spaces</p>
+                <div class="example-visual" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); grid-template-areas: 'card1 card2 card3' 'card4 card5 .'; gap: 5px;">
+                    <div class="named-area-item" style="grid-area: card1; background: var(--primary);">Card 1</div>
+                    <div class="named-area-item" style="grid-area: card2; background: var(--success);">Card 2</div>
+                    <div class="named-area-item" style="grid-area: card3; background: var(--warning);">Card 3</div>
+                    <div class="named-area-item" style="grid-area: card4; background: var(--info);">Card 4</div>
+                    <div class="named-area-item" style="grid-area: card5; background: var(--danger);">Card 5</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.9rem;">
+grid-template-areas:
+  "card1 card2 card3"
+  "card4 card5 .";
+                </div>
+            </div>
+        </div>
+        
+        <div class="highlight">
+            <p><strong>💡 The Period (.) Trick:</strong> Use a period <code>.</code> to create empty cells in your grid. This is perfect for creating asymmetrical layouts or leaving space for future content. You can use multiple periods for larger empty areas: <code>"header header header" ". . ." "footer footer footer"</code> creates a middle row of empty cells.</p>
+        </div>
+    </div>
+
+    <!-- Real World Layouts -->
+    <div class="real-world">
+        <div class="real-world-header">
+            <h3><i class="fas fa-globe"></i> Real-World Website Layouts</h3>
+            <div style="color: var(--warning); font-weight: 600;">
+                <i class="fas fa-laptop-code"></i> Production Examples
+            </div>
+        </div>
+
+        <p>Here's how named areas create common website layouts:</p>
+
+        <div class="real-world-grid">
+            <div class="layout-demo">
+                <div class="layout-title">Blog Layout</div>
+                <p>Header, navigation, main content, sidebar, footer</p>
+                <div class="layout-visual" style="grid-template-columns: 2fr 1fr; grid-template-rows: auto auto 1fr auto; grid-template-areas: 'header header' 'nav nav' 'main sidebar' 'footer footer'; gap: 5px;">
+                    <div class="named-area-item" style="grid-area: header; background: var(--primary);">Header</div>
+                    <div class="named-area-item" style="grid-area: nav; background: var(--info);">Navigation</div>
+                    <div class="named-area-item" style="grid-area: main; background: var(--success);">Main</div>
+                    <div class="named-area-item" style="grid-area: sidebar; background: var(--warning);">Sidebar</div>
+                    <div class="named-area-item" style="grid-area: footer; background: var(--secondary);">Footer</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+grid-template-areas:
+  "header header"
+  "nav nav"
+  "main sidebar"
+  "footer footer";
+                </div>
+            </div>
+            
+            <div class="layout-demo">
+                <div class="layout-title">Dashboard</div>
+                <p>Complex layout with multiple panels</p>
+                <div class="layout-visual" style="grid-template-columns: 1fr 2fr 1fr; grid-template-rows: auto 1fr 1fr auto; grid-template-areas: 'header header header' 'sidebar main widgets' 'sidebar stats widgets' 'footer footer footer'; gap: 3px;">
+                    <div class="named-area-item" style="grid-area: header; background: var(--primary); font-size: 0.7rem;">Header</div>
+                    <div class="named-area-item" style="grid-area: sidebar; background: var(--success); font-size: 0.7rem;">Sidebar</div>
+                    <div class="named-area-item" style="grid-area: main; background: var(--warning); font-size: 0.7rem;">Main</div>
+                    <div class="named-area-item" style="grid-area: widgets; background: var(--info); font-size: 0.7rem;">Widgets</div>
+                    <div class="named-area-item" style="grid-area: stats; background: var(--danger); font-size: 0.7rem;">Stats</div>
+                    <div class="named-area-item" style="grid-area: footer; background: var(--secondary); font-size: 0.7rem;">Footer</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+grid-template-areas:
+  "header header header"
+  "sidebar main widgets"
+  "sidebar stats widgets"
+  "footer footer footer";
+                </div>
+            </div>
+            
+            <div class="layout-demo">
+                <div class="layout-title">E-commerce Product Page</div>
+                <p>Product images, details, related items</p>
+                <div class="layout-visual" style="grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto 1fr auto; grid-template-areas: 'header header header' 'gallery details details' 'related related related'; gap: 5px;">
+                    <div class="named-area-item" style="grid-area: header; background: var(--primary); font-size: 0.7rem;">Header</div>
+                    <div class="named-area-item" style="grid-area: gallery; background: var(--success); font-size: 0.7rem;">Gallery</div>
+                    <div class="named-area-item" style="grid-area: details; background: var(--warning); font-size: 0.7rem;">Details</div>
+                    <div class="named-area-item" style="grid-area: related; background: var(--info); font-size: 0.7rem;">Related</div>
+                </div>
+                <div class="syntax-code" style="font-size: 0.8rem;">
+grid-template-areas:
+  "header header header"
+  "gallery details details"
+  "related related related";
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3><i class="fas fa-sliders-h"></i> Named Areas Playground</h3>
+            <div style="color: var(--primary); font-weight: 600;">
+                <i class="fas fa-gamepad"></i> Design Layouts Visually
+            </div>
+        </div>
+
+        <p>Edit the grid-template-areas to create different layouts. See the visual result instantly!</p>
+
+        <div class="demo-container">
+            <div class="demo-controls">
+                <div class="control-group">
+                    <label for="template-input">
+                        <i class="fas fa-code"></i> grid-template-areas
+                    </label>
+                    <textarea id="template-input" placeholder="Enter your grid-template-areas here...">
+"header header header"
+"sidebar main main"
+"footer footer footer"</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label for="layout-preset">
+                        <i class="fas fa-prescription-bottle"></i> Layout Preset
+                    </label>
+                    <select id="layout-preset">
+                        <option value="custom">Custom</option>
+                        <option value="website">Website Layout</option>
+                        <option value="hero">Centered Hero</option>
+                        <option value="cards">Card Grid</option>
+                        <option value="magazine">Magazine Layout</option>
+                        <option value="dashboard">Dashboard</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-list"></i> Area Assignment
+                    </label>
+                    <div id="area-assignments" class="syntax-code" style="font-size: 0.9rem; margin: 0;">
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main { grid-area: main; }
+.footer { grid-area: footer; }
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button onclick="applyTemplate()">
+                        <i class="fas fa-play"></i> Apply Template
+                    </button>
+                    <button onclick="resetTemplate()" style="background: var(--danger);">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--text);">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Try This:</strong> Change the middle row to <code>"main main sidebar"</code> to move the sidebar to the right. Or try <code>"header header header" ". hero ." "footer footer footer"</code> for a centered hero layout.
+                    </p>
+                </div>
+            </div>
+
+            <div class="demo-preview">
+                <div class="demo-grid" id="grid-container">
+                    <div class="demo-area-item" id="header">Header</div>
+                    <div class="demo-area-item" id="sidebar">Sidebar</div>
+                    <div class="demo-area-item" id="main">Main Content</div>
+                    <div class="demo-area-item" id="footer">Footer</div>
+                </div>
+                <div style="width: 100%; text-align: center;">
+                    <div style="display: inline-block; padding: 8px 20px; background: var(--primary); color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                        <i class="fas fa-eye"></i> Visual Layout Preview
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem; text-align: center;">
+                    Each area automatically sizes to fit its content
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice challenge -->
+    <div class="practice">
+        <h3><i class="fas fa-hands"></i> Practice Challenge: Responsive Blog Layout</h3>
+        
+        <div class="challenge">
+            <div class="challenge-instructions">
+                <p><strong>Your Mission:</strong> Create a responsive blog layout using named areas that works on both desktop and mobile.</p>
+                <ol>
+                    <li>Create a desktop layout with header, navigation, main content, sidebar, and footer</li>
+                    <li>Use named areas for clear, readable code</li>
+                    <li>Make the sidebar appear on the right on desktop</li>
+                    <li>Create a mobile layout where sidebar moves below main content</li>
+                    <li>Use a media query to switch between layouts at 768px</li>
+                    <li>Extra credit: Add a "related articles" section below main content on mobile</li>
+                </ol>
+                <p><strong>Hint:</strong> You'll need two different <code>grid-template-areas</code> definitions - one for desktop (in your main CSS) and one for mobile (in a media query)!</p>
+            </div>
+            
+            <div class="challenge-visual">
+                <div id="challenge-grid">
+                    <div class="challenge-area-item" style="background: var(--primary);">Header</div>
+                    <div class="challenge-area-item" style="background: var(--info);">Navigation</div>
+                    <div class="challenge-area-item" style="background: var(--success);">Main Content</div>
+                    <div class="challenge-area-item" style="background: var(--warning);">Sidebar</div>
+                    <div class="challenge-area-item" style="background: var(--secondary);">Footer</div>
+                </div>
+            </div>
+
+            <div class="challenge-controls">
+                <button class="challenge-btn" onclick="applyChallengeStep('desktop')">
+                    <i class="fas fa-wrench"></i> Desktop Layout
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('mobile')">
+                    <i class="fas fa-wrench"></i> Mobile Layout
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('both')">
+                    <i class="fas fa-wrench"></i> Responsive (Both)
+                </button>
+                
+                <button class="challenge-btn" onclick="applyChallengeStep('all')">
+                    <i class="fas fa-wrench"></i> Complete Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="showChallengeSolution()">
+                    <i class="fas fa-eye"></i> Show Solution
+                </button>
+                
+                <button class="challenge-btn" onclick="resetChallenge()">
+                    <i class="fas fa-redo"></i> Reset Challenge
+                </button>
+            </div>
+
+            <div id="challenge-solution" style="display: none; margin-top: 25px; background: #1e293b; color: white; padding: 20px; border-radius: 10px; font-family: monospace;">
+                <pre style="margin: 0; overflow-x: auto;">
+/* Responsive blog layout with named areas */
+.blog {
+  display: grid;
+  gap: 20px;
+  
+  /* Default: Mobile layout */
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "header"
+    "nav"
+    "main"
+    "sidebar"
+    "footer";
+}
+
+/* Desktop layout */
+@media (min-width: 768px) {
+  .blog {
+    grid-template-columns: 2fr 1fr;
+    grid-template-areas:
+      "header header"
+      "nav nav"
+      "main sidebar"
+      "footer footer";
+  }
+}
+
+/* Extra credit: Mobile with related section */
+.blog {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "header"
+    "nav"
+    "main"
+    "sidebar"
+    "related"
+    "footer";
+}
+
+@media (min-width: 768px) {
+  .blog {
+    grid-template-columns: 2fr 1fr;
+    grid-template-areas:
+      "header header"
+      "nav nav"
+      "main sidebar"
+      "related related"
+      "footer footer";
+  }
+}
+
+/* Area assignments (same for both layouts) */
+.header { grid-area: header; }
+.nav { grid-area: nav; }
+.main { grid-area: main; }
+.sidebar { grid-area: sidebar; }
+.related { grid-area: related; }
+.footer { grid-area: footer; }</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key takeaways -->
+    <div class="takeaways">
+        <h3><i class="fas fa-key"></i> Key Takeaways</h3>
+        
+        <div class="takeaways-grid">
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🎨
+                </div>
+                <div class="takeaway-content">
+                    <h4>grid-template-areas</h4>
+                    <p>Creates a visual map of your layout using ASCII art in CSS.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    📝
+                </div>
+                <div class="takeaway-content">
+                    <h4>grid-area</h4>
+                    <p>Assigns items to named areas for clean, readable placement.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    🔄
+                </div>
+                <div class="takeaway-content">
+                    <h4>Responsive Design</h4>
+                    <p>Change layouts with media queries by redefining grid-template-areas.</p>
+                </div>
+            </div>
+            
+            <div class="takeaway-item">
+                <div class="takeaway-icon">
+                    ⚡
+                </div>
+                <div class="takeaway-content">
+                    <h4>Period (.)</h4>
+                    <p>Creates empty cells. Use for spacing or future content areas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <a href="lesson2.4.html" class="nav-btn prev-btn">
+            <i class="fas fa-arrow-left"></i> Previous: Grid Lines & Areas
+        </a>
+        <a href="../../index.html" class="nav-btn next-btn">
+            Next: Course Home
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="lesson-info">
+        <p>CSS Display Learning Series • Module 2, Lesson 5 of 6</p>
+        <div class="concepts-learned">
+            <i class="fas fa-graduation-cap"></i> Learned: grid-template-areas, named areas, visual layouts, responsive area templates
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--success); font-weight: 600;">
+            <i class="fas fa-check-circle"></i> Excellent! You can now create visual, readable layouts with named areas.
+        </p>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: var(--secondary);">
+            <i class="fas fa-arrow-right"></i> Next: Master responsive grids with auto-fit, auto-fill, and minmax()
+        </p>
+    </div>
+
+    <!-- Feedback element -->
+    <div class="feedback" id="feedback">
+        <i class="fas fa-check-circle"></i>
+        <span id="feedback-text"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const templateInput = document.getElementById('template-input');
+        const layoutPreset = document.getElementById('layout-preset');
+        const areaAssignments = document.getElementById('area-assignments');
+        const gridContainer = document.getElementById('grid-container');
+        const header = document.getElementById('header');
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const footer = document.getElementById('footer');
+        const challengeGrid = document.getElementById('challenge-grid');
+        const challengeSolution = document.getElementById('challenge-solution');
+        const feedback = document.getElementById('feedback');
+
+        // Layout presets
+        const presets = {
+            website: {
+                template: `"header header header"\n"sidebar main main"\n"footer footer footer"`,
+                areas: ['header', 'sidebar', 'main', 'footer']
+            },
+            hero: {
+                template: `"header header header"\n". hero ."\n"footer footer footer"`,
+                areas: ['header', 'hero', 'footer']
+            },
+            cards: {
+                template: `"card1 card2 card3"\n"card4 card5 ."`,
+                areas: ['card1', 'card2', 'card3', 'card4', 'card5']
+            },
+            magazine: {
+                template: `"header header header"\n"featured featured sidebar"\n"article1 article2 sidebar"\n"footer footer footer"`,
+                areas: ['header', 'featured', 'sidebar', 'article1', 'article2', 'footer']
+            },
+            dashboard: {
+                template: `"header header header"\n"sidebar main widgets"\n"sidebar stats widgets"\n"footer footer footer"`,
+                areas: ['header', 'sidebar', 'main', 'widgets', 'stats', 'footer']
+            }
+        };
+
+        // Initialize
+        function init() {
+            // Set up event listeners
+            layoutPreset.addEventListener('change', applyPreset);
+            
+            // Set initial state
+            updateAreaAssignments();
+            applyTemplate();
+        }
+
+        // Apply preset
+        function applyPreset() {
+            const preset = layoutPreset.value;
+            
+            if (preset !== 'custom') {
+                templateInput.value = presets[preset].template;
+                updateAreaAssignments(presets[preset].areas);
+                applyTemplate();
+            }
+        }
+
+        // Update area assignments display
+        function updateAreaAssignments(areas = ['header', 'sidebar', 'main', 'footer']) {
+            let assignments = '';
+            areas.forEach(area => {
+                assignments += `.${area} { grid-area: ${area}; }\n`;
+            });
+            areaAssignments.textContent = assignments;
+        }
+
+        // Apply template to demo
+        function applyTemplate() {
+            const template = templateInput.value;
+            
+            try {
+                // Parse the template
+                const rows = template.trim().split('\n').map(row => row.trim().replace(/"/g, ''));
+                
+                // Count columns in first row
+                const cols = rows[0].split(/\s+/).length;
+                
+                // Apply to grid container
+                gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+                gridContainer.style.gridTemplateRows = `repeat(${rows.length}, 1fr)`;
+                gridContainer.style.gridTemplateAreas = rows.map(row => `"${row}"`).join(' ');
+                
+                // Extract all unique area names
+                const areaNames = new Set();
+                rows.forEach(row => {
+                    row.split(/\s+/).forEach(cell => {
+                        if (cell && cell !== '.') areaNames.add(cell);
+                    });
+                });
+                
+                updateAreaAssignments(Array.from(areaNames));
+                
+                // Hide/show items based on areas
+                const allItems = [header, sidebar, main, footer];
+                allItems.forEach(item => {
+                    const areaName = item.id;
+                    if (areaNames.has(areaName)) {
+                        item.style.display = 'flex';
+                        item.textContent = areaName.charAt(0).toUpperCase() + areaName.slice(1);
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                showFeedback(`Applied template with ${rows.length} rows × ${cols} columns`);
+            } catch (error) {
+                showFeedback('Error: Invalid template format. Check quotes and spacing.');
+            }
+        }
+
+        // Reset template
+        function resetTemplate() {
+            templateInput.value = `"header header header"\n"sidebar main main"\n"footer footer footer"`;
+            layoutPreset.value = 'custom';
+            applyTemplate();
+            showFeedback('Reset to default website layout');
+        }
+
+        // Apply challenge step
+        function applyChallengeStep(step) {
+            const items = challengeGrid.querySelectorAll('.challenge-area-item');
+            
+            if (step === 'desktop' || step === 'both' || step === 'all') {
+                // Desktop layout
+                challengeGrid.style.gridTemplateColumns = '2fr 1fr';
+                challengeGrid.style.gridTemplateRows = 'auto auto 1fr auto';
+                challengeGrid.style.gridTemplateAreas = '"header header" "nav nav" "main sidebar" "footer footer"';
+                challengeGrid.style.gap = '10px';
+                
+                items[0].style.gridArea = 'header';
+                items[1].style.gridArea = 'nav';
+                items[2].style.gridArea = 'main';
+                items[3].style.gridArea = 'sidebar';
+                items[4].style.gridArea = 'footer';
+            }
+            
+            if (step === 'mobile' || step === 'both' || step === 'all') {
+                // Mobile layout
+                if (step === 'mobile') {
+                    challengeGrid.style.gridTemplateColumns = '1fr';
+                    challengeGrid.style.gridTemplateRows = 'auto auto 1fr auto auto';
+                    challengeGrid.style.gridTemplateAreas = '"header" "nav" "main" "sidebar" "footer"';
+                    challengeGrid.style.gap = '10px';
+                }
+            }
+            
+            if (step === 'all') {
+                // Add related section for extra credit
+                if (items.length < 6) {
+                    const related = document.createElement('div');
+                    related.className = 'challenge-area-item';
+                    related.textContent = 'Related Articles';
+                    related.style.background = 'var(--danger)';
+                    challengeGrid.appendChild(related);
+                }
+                
+                // Show both layouts with media query simulation
+                challengeGrid.style.gridTemplateColumns = '1fr';
+                challengeGrid.style.gridTemplateRows = 'auto auto 1fr auto auto auto';
+                challengeGrid.style.gridTemplateAreas = '"header" "nav" "main" "sidebar" "related" "footer"';
+                challengeGrid.style.gap = '10px';
+                
+                items[5].style.gridArea = 'related';
+            }
+            
+            if (step === 'desktop') {
+                showFeedback('Desktop layout: Sidebar on right, navigation full-width');
+            } else if (step === 'mobile') {
+                showFeedback('Mobile layout: Single column, sidebar below main');
+            } else if (step === 'both') {
+                showFeedback('Both layouts: Try resizing your browser to see the change');
+            } else if (step === 'all') {
+                showFeedback('Complete! Responsive layout with related section');
+            }
+        }
+
+        // Show challenge solution
+        function showChallengeSolution() {
+            // Show the solution
+            challengeSolution.style.display = 'block';
+            
+            // Apply the solution
+            applyChallengeStep('all');
+            
+            showFeedback('Applied complete responsive blog solution');
+        }
+
+        // Reset challenge
+        function resetChallenge() {
+            // Reset to original
+            challengeGrid.style.gridTemplateColumns = '';
+            challengeGrid.style.gridTemplateRows = '';
+            challengeGrid.style.gridTemplateAreas = '';
+            challengeGrid.style.gap = '';
+            
+            const items = challengeGrid.querySelectorAll('.challenge-area-item');
+            items.forEach(item => {
+                item.style.gridArea = '';
+            });
+            
+            // Remove extra items
+            while (challengeGrid.children.length > 5) {
+                challengeGrid.removeChild(challengeGrid.lastChild);
+            }
+            
+            challengeSolution.style.display = 'none';
+            showFeedback('Challenge reset to original');
+        }
+
+        // Feedback function
+        function showFeedback(message) {
+            document.getElementById('feedback-text').textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

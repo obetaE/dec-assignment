@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>True Hum | Luxury Designer Hats</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Modern CSS Reset & Variables */
+        :root {
+            --color-dark: #0A2917;
+            --color-primary: #1A472A;
+            --color-accent: #2E8B57;
+            --color-light: #F5F9F7;
+            --color-gold: #C8A97E;
+            --color-gray: #8A8A8A;
+            --color-white: #FFFFFF;
+            
+            --font-heading: 'Cormorant Garamond', serif;
+            --font-body: 'Inter', sans-serif;
+            
+            --border-radius-sm: 4px;
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 3rem;
+            --spacing-xl: 5rem;
+            --spacing-xxl: 8rem;
+            
+            --shadow-subtle: 0 2px 20px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 5px 30px rgba(0, 0, 0, 0.08);
+            --shadow-elevated: 0 10px 40px rgba(0, 0, 0, 0.1);
+            
+            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-fast: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 18px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-dark);
+            line-height: 1.7;
+            background-color: var(--color-white);
+            overflow-x: hidden;
+            font-weight: 400;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            color: var(--color-dark);
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-size: 3.2rem;
+            margin-bottom: var(--spacing-md);
+            position: relative;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background-color: var(--color-gold);
+        }
+
+        h3 {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        p {
+            margin-bottom: var(--spacing-md);
+            font-size: 1.1rem;
+            color: #444;
+        }
+
+        .text-large {
+            font-size: 1.3rem;
+            line-height: 1.8;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-sm);
+        }
+
+        /* Modern Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2.5rem;
+            font-weight: 500;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            border: none;
+            font-family: var(--font-body);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-accent);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-gold {
+            background-color: var(--color-gold);
+            color: var(--color-dark);
+        }
+
+        .btn-gold:hover {
+            background-color: #B8945F;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* =========== NEW MODERN NAVBAR =========== */
+        /* Glassmorphism Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: var(--transition-smooth);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        header.scrolled {
+            padding: 0.8rem 0;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            width: 90%;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--spacing-sm);
+        }
+
+        /* Logo Design */
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-white);
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 700;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 12px rgba(26, 71, 42, 0.2);
+        }
+
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            color: var(--color-gold);
+        }
+
+        /* Modern Navigation */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: var(--spacing-lg);
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--color-dark);
+            text-decoration: none;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .nav-link i {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            transition: var(--transition-fast);
+        }
+
+        .nav-link:hover {
+            color: var(--color-accent);
+        }
+
+        .nav-link:hover i {
+            opacity: 1;
+            transform: translateX(3px);
+        }
+
+        .nav-link.active {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            border-radius: 2px;
+        }
+
+        /* Modern CTA Button */
+        .nav-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.8rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: var(--color-white);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-cta:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .nav-cta:hover:before {
+            left: 100%;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 139, 87, 0.3);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-light);
+            color: var(--color-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-toggle:hover {
+            background: var(--color-primary);
+            color: var(--color-white);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 320px;
+            height: 100vh;
+            background: var(--color-white);
+            z-index: 1001;
+            padding: var(--spacing-xl);
+            transition: var(--transition-smooth);
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-logo {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .close-menu {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--color-dark);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .close-menu:hover {
+            background: var(--color-light);
+            color: var(--color-primary);
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            flex: 1;
+        }
+
+        .mobile-nav-item {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            color: var(--color-dark);
+            text-decoration: none;
+            padding: 0.8rem 0;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--transition-fast);
+        }
+
+        .mobile-nav-link i {
+            width: 24px;
+            color: var(--color-primary);
+        }
+
+        .mobile-nav-link:hover {
+            color: var(--color-accent);
+            padding-left: 10px;
+        }
+
+        .mobile-cta {
+            margin-top: auto;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: var(--color-white);
+            text-align: center;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition-fast);
+        }
+
+        .mobile-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 139, 87, 0.3);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-menu {
+                gap: var(--spacing-md);
+            }
+            
+            .nav-cta {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .mobile-nav {
+                width: 100%;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
+            }
+            
+            .logo-circle {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Hero Section - Premium Layout */
+        .hero {
+            padding-top: 10rem;
+            padding-bottom: var(--spacing-xxl);
+            background: linear-gradient(135deg, #F5F9F7 0%, #E8F3EE 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            align-items: center;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--color-accent);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            color: #555;
+            margin-bottom: var(--spacing-lg);
+            max-width: 90%;
+        }
+
+        .hero-image-container {
+            position: relative;
+        }
+
+        .hero-main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .hero-decoration {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 1px solid rgba(200, 169, 126, 0.3);
+            border-radius: 50%;
+            top: -40px;
+            right: -40px;
+            z-index: 1;
+        }
+
+        /* Modern Card Grid */
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title h2:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--color-gray);
+            max-width: 700px;
+            margin: 0 auto var(--spacing-xl);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .card {
+            background: var(--color-white);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-subtle);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .card-image {
+            height: 260px;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover .card-image img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: var(--spacing-md);
+        }
+
+        .card-category {
+            display: inline-block;
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-dark);
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: var(--color-gray);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+        }
+
+        .card-price {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* Premium Features Section */
+        .features {
+            background-color: var(--color-light);
+            padding: var(--spacing-xxl) 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: var(--spacing-lg);
+            background: var(--color-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-subtle);
+            transition: var(--transition-smooth);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(26, 71, 42, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-md);
+            color: var(--color-primary);
+            font-size: 1.8rem;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* Contact Section - Modern Layout */
+        .contact-section {
+            padding: var(--spacing-xxl) 0;
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            align-items: center;
+        }
+
+        .contact-info {
+            padding-right: var(--spacing-md);
+        }
+
+        .contact-info h2 {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .contact-details {
+            margin-top: var(--spacing-lg);
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--color-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            color: var(--color-primary);
+            font-size: 1.2rem;
+        }
+
+        .contact-form-container {
+            background: var(--color-white);
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            color: var(--color-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: var(--transition-fast);
+            background-color: #fafafa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            background-color: var(--color-white);
+            box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: var(--spacing-xxl) 0;
+            background: linear-gradient(rgba(10, 41, 23, 0.9), rgba(10, 41, 23, 0.95)), url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--color-white);
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            color: var(--color-white);
+            font-size: 3.5rem;
+        }
+
+        .cta-section h2:after {
+            background-color: var(--color-gold);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto var(--spacing-xl);
+        }
+
+        /* Footer - Clean & Elegant */
+        footer {
+            background-color: var(--color-dark);
+            color: var(--color-white);
+            padding: var(--spacing-xxl) 0 var(--spacing-lg);
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .footer-logo {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--color-white);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .footer-heading {
+            font-size: 1.3rem;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-white);
+            font-family: var(--font-heading);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            transition: var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--color-gold);
+            padding-left: 5px;
+        }
+
+        .footer-contact p {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .footer-contact i {
+            margin-right: var(--spacing-sm);
+            color: var(--color-gold);
+            width: 20px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            h1 {
+                font-size: 3.2rem;
+            }
+            
+            h2 {
+                font-size: 2.8rem;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            .hero {
+                padding-top: 8rem;
+            }
+            
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-info {
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+            
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            h2 {
+                font-size: 2.2rem;
+            }
+            
+            .nav-desktop {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .mobile-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 400px;
+                height: 100vh;
+                background-color: var(--color-white);
+                z-index: 1000;
+                padding: var(--spacing-xl);
+                transition: var(--transition-smooth);
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+            }
+            
+            .mobile-menu.active {
+                right: 0;
+            }
+            
+            .mobile-menu-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: var(--spacing-xl);
+            }
+            
+            .mobile-nav {
+                list-style: none;
+            }
+            
+            .mobile-nav li {
+                margin-bottom: var(--spacing-md);
+            }
+            
+            .mobile-nav a {
+                font-size: 1.2rem;
+                font-weight: 500;
+                color: var(--color-dark);
+            }
+            
+            .mobile-nav a:hover {
+                color: var(--color-accent);
+            }
+            
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition-smooth);
+            }
+            
+            .overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .section {
+                padding: var(--spacing-xl) 0;
+            }
+            
+            .hero {
+                padding-top: 7rem;
+                padding-bottom: var(--spacing-xl);
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-section h2 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Modern Navbar -->
+    <header id="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="#" class="brand-logo">
+                <div class="logo-circle">TH</div>
+                <div class="logo-text">True<span>Hum</span></div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#home" class="nav-link active">
+                            <span>Home</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#collection" class="nav-link">
+                            <span>Collection</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#about" class="nav-link">
+                            <span>About</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#craftsmanship" class="nav-link">
+                            <span>Craftsmanship</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#contact" class="nav-link">
+                            <span>Contact</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- CTA Button & Mobile Toggle -->
+            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <a href="#free-sample" class="nav-cta">
+                    <i class="fas fa-gift"></i>
+                    <span>Free Sample</span>
+                </a>
+                <button class="mobile-toggle" id="mobileToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="mobile-nav" id="mobileNav">
+            <div class="mobile-header">
+                <div class="mobile-logo">TrueHum</div>
+                <button class="close-menu" id="closeMenu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <ul class="mobile-nav-links">
+                <li class="mobile-nav-item">
+                    <a href="#home" class="mobile-nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#collection" class="mobile-nav-link">
+                        <i class="fas fa-tshirt"></i>
+                        <span>Collection</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#about" class="mobile-nav-link">
+                        <i class="fas fa-info-circle"></i>
+                        <span>About</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#craftsmanship" class="mobile-nav-link">
+                        <i class="fas fa-hands"></i>
+                        <span>Craftsmanship</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#contact" class="mobile-nav-link">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#privacy" class="mobile-nav-link">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Privacy Policy</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <a href="#free-sample" class="mobile-cta">
+                <i class="fas fa-gift"></i>
+                Get Your Free Sample
+            </a>
+        </div>
+        
+        <!-- Overlay -->
+        <div class="overlay" id="overlay"></div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <div class="hero-subtitle">Luxury Designer Hats</div>
+                <h1>Crafted for the Distinguished Individual</h1>
+                <p class="hero-description">True Hum creates exclusive, meticulously crafted hats that blend timeless elegance with modern design. For those who appreciate quality, comfort, and sophisticated style.</p>
+                <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-lg);">
+                    <a href="#collection" class="btn btn-primary">View Collection</a>
+                    <a href="#contact" class="btn btn-secondary">Free Sample</a>
+                </div>
+            </div>
+            <div class="hero-image-container">
+                <div class="hero-decoration"></div>
+                <img src="https://media.istockphoto.com/id/478678839/photo/the-epitome-of-gorgeous-elegance.webp?a=1&b=1&s=612x612&w=0&k=20&c=YTXZdEPqSHcGoBY-29B1FhF-_UqcOtrvibW2EtZK0GM=" alt="Luxury designer hat" class="hero-main-image">
+            </div>
+        </div>
+    </section>
+
+    <!-- Collection Section -->
+    <section class="section" id="collection">
+        <div class="container">
+            <div class="section-title">
+                <h2>Signature Collection</h2>
+            </div>
+            <p class="section-subtitle">Each hat is a masterpiece of craftsmanship, designed for comfort, style, and timeless elegance.</p>
+            
+            <div class="cards-grid">
+                <!-- Card 1 -->
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1713918927331-6c85fe904cda?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YSUyMGNsYXNzaWMlMjBmZWRvcmF8ZW58MHx8MHx8fDA%3D" alt="The Classic Fedora">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Classic</div>
+                        <h3 class="card-title">The Classic Fedora</h3>
+                        <p class="card-description">Timeless elegance with a modern fit. Made from premium wool felt with a silk ribbon accent.</p>
+                        <div class="card-price">$189</div>
+                        <a href="#" class="btn btn-secondary" style="padding: 0.7rem 1.5rem; width: 100%;">View Details</a>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1557165515-0a5db651be2e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3VtbWVyJTIwaGF0fGVufDB8fDB8fHww" alt="Panama Summer Hat">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Summer</div>
+                        <h3 class="card-title">Panama Summer Hat</h3>
+                        <p class="card-description">Handwoven from genuine toquilla straw. Lightweight, breathable, and perfect for sunny days.</p>
+                        <div class="card-price">$159</div>
+                        <a href="#" class="btn btn-secondary" style="padding: 0.7rem 1.5rem; width: 100%;">View Details</a>
+                    </div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1521369909029-2afed882baee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Wide Brim Elegance">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Elegance</div>
+                        <h3 class="card-title">Wide Brim Elegance</h3>
+                        <p class="card-description">Make a statement with this wide-brimmed hat. Features a silk lining and adjustable inner band.</p>
+                        <div class="card-price">$219</div>
+                        <a href="#" class="btn btn-secondary" style="padding: 0.7rem 1.5rem; width: 100%;">View Details</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: var(--spacing-xl);">
+                <a href="#" class="btn btn-primary">View All Collections</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why True Hum</h2>
+            </div>
+            <p class="section-subtitle">We combine traditional craftsmanship with modern design principles to create hats of exceptional quality and style.</p>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <h3 class="feature-title">Premium Materials</h3>
+                    <p>Only the finest materials are selected for each hat, ensuring durability, comfort, and luxury.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-hands"></i>
+                    </div>
+                    <h3 class="feature-title">Handcrafted</h3>
+                    <p>Every hat is meticulously crafted by skilled artisans with attention to every detail.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <h3 class="feature-title">Tailored Fit</h3>
+                    <p>Designed with seniors in mind, our hats offer comfort and perfect fit for all-day wear.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="feature-title">Direct to You</h3>
+                    <p>As an online-only brand, we deliver exceptional value without compromising on quality.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="container contact-container">
+            <div class="contact-info">
+                <h2>Get in Touch</h2>
+                <p class="text-large">Have questions about our hats or need assistance with your order? Our team is here to help you.</p>
+                
+                <div class="contact-details">
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <h3>Phone</h3>
+                            <p>1-800-TRUE-HUM<br>Mon-Fri, 9am-6pm EST</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <h3>Email</h3>
+                            <p>info@truehum.com<br>support@truehum.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h3>Location</h3>
+                            <p>123 Design Avenue<br>New York, NY 10001</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-form-container">
+                <h3>Send us a Message</h3>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="Your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Your Message</label>
+                        <textarea id="message" class="form-control" rows="5" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Experience True Hum Quality</h2>
+            <p>We invite you to experience our craftsmanship firsthand. Order a free sample of our premium materials and see the difference for yourself.</p>
+            <a href="#contact" class="btn btn-gold" style="font-size: 1.1rem; padding: 1.2rem 3rem;">Order Your Free Sample</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-about">
+                    <div class="footer-logo">TrueHum<span style="color: var(--color-gold);">.</span></div>
+                    <p class="footer-description">Luxury designer hats crafted for the distinguished individual. Modern elegance meets timeless craftsmanship.</p>
+                </div>
+                
+                <div class="footer-links-container">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#collection">Collection</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-contact">
+                    <h4 class="footer-heading">Contact Info</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Design Avenue, NY 10001</p>
+                    <p><i class="fas fa-phone"></i> 1-800-TRUE-HUM</p>
+                    <p><i class="fas fa-envelope"></i> info@truehum.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 True Hum. All rights reserved. | Luxury Designer Hats</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileNav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('overlay');
+        const navbar = document.getElementById('navbar');
+
+        mobileToggle.addEventListener('click', () => {
+            mobileNav.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+
+        overlay.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+
+        // Scroll effect for navbar
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Active link highlighting
+        const sections = document.querySelectorAll('section, div[style*="height: 200vh"]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (scrollY >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
